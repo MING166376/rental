@@ -2,19 +2,34 @@
   <div class="container">
     <div class="top-healder">
       <div class="nav-left">
-        <Tab :buttons="[
-          { label: '全部', value: 'null' },
-          { label: '未审核', value: '0' },
-          { label: '已审核', value: '1' }
-        ]" initialActive="null" @change="handleChange" />
+        <p style="font-size: 12px;color: rgb(130,130,130);">省份</p>
+
+        <el-select size="mini" @change="handleAreaChange" style="width: 100%;" v-model="topAreaId" placeholder="不限">
+          <el-option v-for="item in topArea" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+
+        </el-select>
+
+        <p style="font-size: 12px;color: rgb(130,130,130);">市区</p>
+
+        <el-select size="mini" style="width: 100%;" v-model="queryCityAreaId" placeholder="不限">
+          <el-option v-for="item in cityArea" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+
+        </el-select>
+
+        <div style="text-align: center;" class="primary-bt" @click="reset">
+          重置
+        </div>
+
       </div>
 
       <div class="nav-right">
         <div>
-          <AutoInput placeholder="搜索身份证号" @listener="listener" />
+          <AutoInput placeholder="搜索小区" @listener="listener" />
         </div>
 
-        <div class="primary-bt" @click="drawer = true">
+        <div class="primary-bt" @click="saveCommunityOperation">
           <i class="el-icon-plus"></i>
 
           新增小区
@@ -27,36 +42,21 @@
     <!-- 表格及分页信息 -->
     <div>
       <el-table :data="apiResult.data">
-        <el-table-column width="200" prop="username" label="申请人">
+        <el-table-column width="200" prop="username" label="小区名">
           <template #default="scope">
             <div class="over-text">
-              {{ scope.row.username }}
+              {{ scope.row.name }}
             </div>
 
           </template>
 
         </el-table-column>
 
-        <el-table-column width="300" prop="content" label="身份证号">
-          <template #default="scope">
-            <div class="over-text">
-              {{ scope.row.idcard }}
-            </div>
+        <el-table-column width="100" prop="topAreaName" label="所在省份"></el-table-column>
 
-          </template>
+        <el-table-column prop="cityAreaName" width="108" label="所在城市"></el-table-column>
 
-        </el-table-column>
-
-        <el-table-column prop="parentId" :sortable="true" width="108" label="审核状态">
-          <template #default="scope">
-            <el-tag :type="scope.row.isAudit ? 'success' : 'danger'" size="mini">{{ scope.row.isAudit ? '已审核' : '未审核'
-              }}</el-tag>
-
-          </template>
-
-        </el-table-column>
-
-        <el-table-column prop="createTime" :sortable="true" width="168" label="申请时间"></el-table-column>
+        <el-table-column prop="createTime" :sortable="true" width="168" label="创建时间"></el-table-column>
 
         <el-table-column label="" align="center">
           <template #default="scope">
@@ -108,8 +108,38 @@
 
     </el-dialog>
 
+
+    <!-- 小区详情信息 -->
+    <el-dialog title="小区详情信息" :show-close="false" :visible.sync="dialogCommunityVisible" width="70%">
+      <div style="display: flex;gap: 30px;">
+        <div>
+          <div>
+            <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*小区封面图</p>
+
+            <img style="width: 100%;height: 200px;border-radius: 0px;" :src="community.cover" alt="" srcset="">
+          </div>
+
+          <div>
+            <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*实况图</p>
+
+            <Carousel :showBtn="false" containerHeight="200px" :carouselItems="carouselItems" />
+          </div>
+
+        </div>
+
+        <div>
+          <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*介绍</p>
+
+          <div v-html="community.detail"></div>
+
+        </div>
+
+      </div>
+
+    </el-dialog>
+
     <!-- 小区信息抽屉 -->
-    <el-drawer title="小区信息操作" :modal="false" :wrapperClosable="false" :visible.sync="drawer" :direction="direction"
+    <el-drawer title="新增小区" :modal="false" :wrapperClosable="false" :visible.sync="drawer" :direction="direction"
                size="40%" :before-close="handleClose">
       <div style="margin-inline: 20px;">
         <div>
@@ -236,12 +266,16 @@
 import AutoInput from "@/components/AutoInput.vue"; // 自己封装好的输入框组件
 import Tab from "@/components/Tab.vue";
 import Editor from "@/components/Editor.vue";
+import Carousel from "@/components/Carousel.vue";
 export default {
-  components: { AutoInput, Tab, Editor }, // 注册组件
+  components: { AutoInput, Tab, Editor, Carousel }, // 注册组件
   data() {
     return {
+      dialogCommunityVisible: false,
       dialogImageUrl: '',
       content: '',
+      carouselItems: [],
+      queryCityAreaId: null,
       dialogVisible: false,
       topAreaId: null,
       cityAreaId: null,
@@ -265,11 +299,30 @@ export default {
       dialogDeletedVisible: false, // 删除弹窗控制开关变量 - 初始是关（false）
     };
   },
+  watch: {
+    queryCityAreaId(newVal, oldValue) {
+      this.communityQueryDto.areaId = newVal;
+      this.fetchFreshData();
+    }
+  },
   created() {
     this.fetchFreshData();
     this.fetchTopArea();
   },
   methods: {
+    reset() {
+      this.communityQueryDto.areaId = null;
+      this.topAreaId = null;
+      this.queryCityAreaId = null;
+      this.fetchFreshData();
+    },
+    handleCityQuery() {
+      console.log(this.queryCityAreaId);
+    },
+    saveCommunityOperation() {
+      this.handleClose();
+      this.drawer = true;
+    },
     onListener(text) {
       this.content = text;
     },
@@ -295,6 +348,14 @@ export default {
         this.community.covers = this.coverList.length === 0 ? null : this.coverList.join(',');
         await this.$axios.post('/community/save', this.community);
         this.handleClose();
+        this.$notify({
+          title: '小区新增',
+          type: 'success',
+          message: '小区新增成功',
+          position: 'buttom-right',
+          suration: 1000,
+        })
+        this.fetchFreshData();
       } catch (error) {
         console.log("新增小区信息异常：", error);
         this.$notify({
@@ -310,7 +371,7 @@ export default {
     handleImageSuccess(res, file) {
       // 通知提示
       this.$notify({
-        title: '头像上传',
+        title: '封面上传',
         type: res.code === 200 ? 'success' : 'error',
         message: res.code === 200 ? '上传成功' : res.data,
         position: 'buttom-right',
@@ -352,17 +413,28 @@ export default {
     handleClose() {
       this.drawer = false;
       this.cover = '';
+      this.active = 0;
       this.covers = [];
+      this.coverList = [];
+      this.topAreaId = null;
+      this.cityAreaId = null;
       this.content = '';
       this.community = {};
     },
     handleDetail(data) {
-      this.drawer = true;
+      this.dialogCommunityVisible = true;
       this.community = data;
+      this.carouselItems = data.covers.split(',').map(entity => {
+        return {
+          image: entity,
+          title: data.name,
+          subtitle: data.topAreaName + "·" + data.cityAreaName
+        }
+      });
     },
     // 输入框组件输入回传
     listener(text) {
-      this.communityQueryDto.idcard = text; // 赋值查询条件的内容
+      this.communityQueryDto.name = text; // 赋值查询条件的内容
       this.fetchFreshData(); // 重新加载数据
     },
     async auditcommunity() {
