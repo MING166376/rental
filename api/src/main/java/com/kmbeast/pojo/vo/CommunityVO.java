@@ -11,6 +11,10 @@ import lombok.EqualsAndHashCode;
 @Data
 public class CommunityVO extends Community {
     /**
+     * 省份ID
+     */
+    private Integer topAreaId;
+    /**
      * 省份名
      */
     private String topAreaName;

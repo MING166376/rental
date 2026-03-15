@@ -1,44 +1,31 @@
 <template>
   <div class="container">
-    <div class="top-healder">
+    <div class="top-header">
       <div class="nav-left">
         <p style="font-size: 12px;color: rgb(130,130,130);">省份</p>
-
         <el-select size="mini" @change="handleAreaChange" style="width: 100%;" v-model="topAreaId" placeholder="不限">
           <el-option v-for="item in topArea" :key="item.id" :label="item.name" :value="item.id">
           </el-option>
-
         </el-select>
-
         <p style="font-size: 12px;color: rgb(130,130,130);">市区</p>
-
         <el-select size="mini" style="width: 100%;" v-model="queryCityAreaId" placeholder="不限">
           <el-option v-for="item in cityArea" :key="item.id" :label="item.name" :value="item.id">
           </el-option>
-
         </el-select>
-
         <div style="text-align: center;" class="primary-bt" @click="reset">
           重置
         </div>
-
       </div>
-
       <div class="nav-right">
         <div>
           <AutoInput placeholder="搜索小区" @listener="listener" />
         </div>
-
         <div class="primary-bt" @click="saveCommunityOperation">
           <i class="el-icon-plus"></i>
-
           新增小区
         </div>
-
       </div>
-
     </div>
-
     <!-- 表格及分页信息 -->
     <div>
       <el-table :data="apiResult.data">
@@ -47,65 +34,44 @@
             <div class="over-text">
               {{ scope.row.name }}
             </div>
-
           </template>
-
         </el-table-column>
-
         <el-table-column width="100" prop="topAreaName" label="所在省份"></el-table-column>
-
         <el-table-column prop="cityAreaName" width="108" label="所在城市"></el-table-column>
-
         <el-table-column prop="createTime" :sortable="true" width="168" label="创建时间"></el-table-column>
-
         <el-table-column label="" align="center">
           <template #default="scope">
             <div class="operate-buttons">
               <el-dropdown trigger="click" placement="bottom-end">
                 <span class="el-dropdown-link">
                   <i class="el-icon-more"></i>
-
                 </span>
-
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleEdit(scope.row)" icon="el-icon-edit">修改</el-dropdown-item>
                   <el-dropdown-item @click.native="handleDetail(scope.row)"
                                     icon="el-icon-finished">详情</el-dropdown-item>
-
                   <el-dropdown-item @click.native="handleDelete(scope.row)" icon="el-icon-delete">删除</el-dropdown-item>
-
                 </el-dropdown-menu>
-
               </el-dropdown>
-
             </div>
-
           </template>
-
         </el-table-column>
-
       </el-table>
-
       <!-- 分页组件区域 -->
       <div class="pager">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                        :current-page="communityQueryDto.current" :page-sizes="[10, 20]" :page-size="communityQueryDto.size"
                        layout="total, sizes, prev, pager, next, jumper" :total="apiResult.total"></el-pagination>
-
       </div>
-
     </div>
 
     <!-- 删除确认弹窗 -->
     <el-dialog title="删除小区信息" :show-close="false" :visible.sync="dialogDeletedVisible" width="20%">
       <span>确定删除小区信息数据？</span>
-
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogDeletedVisible = false">取消</el-button>
-
         <el-button size="mini" type="primary" @click="confirmDeleted">确定</el-button>
-
       </span>
-
     </el-dialog>
 
 
@@ -114,28 +80,21 @@
       <div style="display: flex;gap: 30px;">
         <div>
           <div>
-            <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*小区封面图</p>
-
+            <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*小区封面图
+            </p>
             <img style="width: 100%;height: 200px;border-radius: 0px;" :src="community.cover" alt="" srcset="">
           </div>
-
           <div>
             <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*实况图</p>
-
             <Carousel :showBtn="false" containerHeight="200px" :carouselItems="carouselItems" />
           </div>
-
         </div>
 
         <div>
           <p style="color: aliceblue;background-color: rgb(55, 171, 33);padding: 10px 20px;margin-bottom: 0;">*介绍</p>
-
           <div v-html="community.detail"></div>
-
         </div>
-
       </div>
-
     </el-dialog>
 
     <!-- 小区信息抽屉 -->
@@ -145,120 +104,80 @@
         <div>
           <el-steps :active="active" finish-status="success">
             <el-step title="补充地区信息"></el-step>
-
             <el-step title="补充小区基本信息"></el-step>
-
             <el-step title="补充小区介绍"></el-step>
-
           </el-steps>
-
         </div>
-
         <div>
           <!-- 小区地区信息 -->
           <div v-if="active === 0">
             <div>
               <p>*所属省份</p>
-
               <el-select @change="handleAreaChange" style="width: 100%;" v-model="topAreaId" placeholder="请选择">
                 <el-option v-for="item in topArea" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
-
               </el-select>
-
               <p>*所属市区</p>
-
               <el-select style="width: 100%;" v-model="cityAreaId" placeholder="请选择">
                 <el-option v-for="item in cityArea" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
-
               </el-select>
-
             </div>
-
           </div>
-
           <!-- 小区基本信息 -->
           <div v-if="active === 1">
             <div>
               <p>*小区标题</p>
-
               <el-input v-model="community.name" placeholder="请输入内容"></el-input>
-
             </div>
-
             <div>
               <p>*小区封面</p>
-
               <div class="user-avatar">
                 <p>点击📷处即可上传小区封面</p>
-
                 <img v-if="cover" style="width: 200px;height: 140px;border-radius: 5px;" :src="cover || ''" alt="">
                 <el-upload class="avatar-uploader" action="api/v1.0/house-rental-api/file/upload"
                            :show-file-list="false" :on-success="handleImageSuccess">
                   <i class="el-icon-camera-solid"></i>
-
                 </el-upload>
-
               </div>
-
             </div>
-
           </div>
-
           <!-- 小区介绍 -->
           <div v-if="active === 2">
             <div>
               <p>*小区实况图</p>
-
               <el-upload :on-success="handleCovers" action="api/v1.0/house-rental-api/file/upload"
                          list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
                 <i class="el-icon-plus"></i>
-
               </el-upload>
-
               <el-dialog :modal="false" :visible.sync="dialogVisible">
                 <img style="z-index: 1000;" width="100%" :src="dialogImageUrl" alt="">
               </el-dialog>
-
             </div>
-
             <div>
               <p>*补充小区介绍</p>
-
               <Editor :receiveContent="content" height="300px" api="api/v1.0/house-rental-api/file/upload"
                       @on-listener="onListener" />
             </div>
-
           </div>
-
         </div>
-
         <div style="display: flex;margin-block: 20px;">
           <div v-if="active !== 0" class="primary-bt" @click="last" style="text-align: center;">
             <i class="el-icon-caret-left"></i>
-
             上一步
           </div>
-
           <div v-if="active !== 2" class="primary-bt" @click="next" style="text-align: center;">
             <i class="el-icon-caret-right"></i>
-
             下一步
           </div>
-
           <div v-if="active === 2" class="info-bt" @click="saveCommunity" style="text-align: center;">
             新增小区信息
           </div>
-
         </div>
-
       </div>
-
     </el-drawer>
 
   </div>
-
 </template>
 
 <script>
@@ -310,6 +229,10 @@ export default {
     this.fetchTopArea();
   },
   methods: {
+    handleEdit(data) {
+      localStorage.setItem('communityInfo',JSON.stringify(data));
+      this.$router.push('/community-update');
+    },
     reset() {
       this.communityQueryDto.areaId = null;
       this.topAreaId = null;
@@ -367,7 +290,7 @@ export default {
         })
       }
     },
-    // 头像上传响应
+    // 封面上传响应
     handleImageSuccess(res, file) {
       // 通知提示
       this.$notify({
@@ -500,7 +423,6 @@ export default {
   },
 };
 </script>
-
 <style scoped lang="scss">
 .pager {
   margin-block: 20px;
@@ -534,7 +456,7 @@ export default {
   margin: 10px 20px;
 }
 
-.top-healder {
+.top-header {
   margin-block: 10px;
   padding-inline: 10px;
   border-radius: 5px;

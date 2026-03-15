@@ -72,6 +72,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/community-update",
+        name: '修改小区信息',
+        show: false,
+        icon: 'el-icon-user',
+        component: () => import(`@/views/admin/CommunityUpdate.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/evaluations-manage",
         name: '评论管理',
         show: true,

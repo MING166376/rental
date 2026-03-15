@@ -4,8 +4,9 @@
 
     <select id="list" resultMap="BaseResultMap">
         SELECT c.*,
-        a1.name AS topAreaName,
-        a2.name AS cityAreaName
+        a1.id AS top_area_id,
+        a1.name AS top_area_name,
+        a2.name AS city_area_name
         FROM community c
         LEFT JOIN area a2 ON a2.id = c.area_id
         LEFT JOIN area a1 ON a1.id = a2.parent_id
@@ -48,6 +49,7 @@
     <resultMap id="BaseResultMap" type="com.kmbeast.pojo.vo.CommunityVO">
         <id column="id" property="id"/>
         <result column="area_id" property="areaId"/>
+        <result column="top_area_id" property="topAreaId"/>
         <result column="top_area_name" property="topAreaName"/>
         <result column="city_area_name" property="cityAreaName"/>
         <result column="name" property="name"/>
