@@ -7,7 +7,7 @@
 
       <div class="content">
         告别传统贴条招租，平台千万级流量曝光，精准匹配优质租客，让空房快速 “活” 起来，租金收益不空置。
-        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为房东</span>
+        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为中介经理</span>
 
       </div>
 
@@ -38,7 +38,7 @@ export default {
         console.log(this.landlord);
 
       } catch (error) {
-        console.log("查询房东申请信息异常：", error);
+        console.log("查询中介经理申请信息异常：", error);
       }
     },
   }

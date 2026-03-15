@@ -1,7 +1,7 @@
 <template>
   <div class="reply-container">
     <div class="content-area">
-      <h1 style="margin-top: 0;">申请成为房东</h1>
+      <h1 style="margin-top: 0;">申请成为中介经理</h1>
 
       <p>*请上传身份证正面照</p>
 
@@ -99,7 +99,7 @@ export default {
           position: 'buttom-right',
           suration: 1000,
         })
-        console.log("查询房东申请信息异常：", error);
+        console.log("查询中介经理申请信息异常：", error);
       }
     },
   }

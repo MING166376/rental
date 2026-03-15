@@ -90,8 +90,8 @@
     </div>
 
     <!-- 删除确认弹窗 -->
-    <el-dialog title="删除房东信息" :show-close="false" :visible.sync="dialogDeletedVisible" width="20%">
-      <span>确定删除房东信息数据？</span>
+    <el-dialog title="删除中介经理信息" :show-close="false" :visible.sync="dialogDeletedVisible" width="20%">
+      <span>确定删除中介经理信息数据？</span>
 
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogDeletedVisible = false">取消</el-button>
@@ -102,8 +102,8 @@
 
     </el-dialog>
 
-    <!-- 房东申请信息抽屉 -->
-    <el-drawer title="房东申请信息" :modal="false" :wrapperClosable="false" :visible.sync="drawer" :direction="direction"
+    <!-- 中介经理申请信息抽屉 -->
+    <el-drawer title="中介经理申请信息" :modal="false" :wrapperClosable="false" :visible.sync="drawer" :direction="direction"
                size="70%" :before-close="handleClose">
       <div style="gap: 30px;display: flex;justify-content: center;align-items: center;">
         <div>
@@ -167,7 +167,7 @@ export default {
         data: [], // 数据项
         total: 0, // 符合条件的数据总想 - 初始赋值为0
       },
-      landlord: {}, // 房东信息
+      landlord: {}, // 中介经理信息
       landlordQueryDto: { // 搜索条件
         current: 1, // 当前页 - 初始是第一页
         size: 10, // 页面显示大小 - 初始是10条
@@ -204,20 +204,20 @@ export default {
         await this.$axios.put('/landlord/update', landlord);
         this.$message.success('审核成功');
         this.drawer = false; // 关闭详情抽屉
-        this.fetchFreshData(); // 重新加载房东数据
+        this.fetchFreshData(); // 重新加载中介经理数据
       } catch (error) {
         this.$message.info(error.message);
-        console.error('审核房东信息信息异常:', error);
+        console.error('审核中介经理信息信息异常:', error);
       }
     },
-    // 查询房东信息数据
+    // 查询中介经理信息数据
     async fetchFreshData() {
       try {
         const { data, total } = await this.$axios.post('/landlord/list', this.landlordQueryDto);
         this.apiResult.data = data;
         this.apiResult.total = total;
       } catch (error) {
-        console.error('查询房东信息信息异常:', error);
+        console.error('查询中介经理信息信息异常:', error);
       }
     },
     // 分页 - 处理页面页数切换
@@ -231,28 +231,28 @@ export default {
       this.landlordQueryDto.current = current; // 当前页选中
       this.fetchFreshData(); // 重新加载页面数据
     },
-    // 表格点击删除房东信息
+    // 表格点击删除中介经理信息
     handleDelete(row) {
       this.dialogDeletedVisible = true; // 开启删除弹窗确认
       this.id = row.id;
     },
-    // 房东信息删除
+    // 中介经理信息删除
     async confirmDeleted() {
       try {
         const { code } = await this.$axios.delete(`/landlord/${this.id}`);
         if (code === 200) {
           this.$notify.success({
-            title: '房东信息删除',
+            title: '中介经理信息删除',
             message: '删除成功',
             position: 'buttom-right',
             suration: 1000,
           });
           this.dialogDeletedVisible = false; // 关闭删除确认弹窗
           this.id = null; // 将标识ID置位
-          this.fetchFreshData(); // 删除房东信息数据之后，重新加载房东信息数据
+          this.fetchFreshData(); // 删除中介经理信息数据之后，重新加载中介经理信息数据
         }
       } catch (error) {
-        console.log("删除房东信息数据异常：", error);
+        console.log("删除中介经理信息数据异常：", error);
       }
     }
   },

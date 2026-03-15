@@ -32,7 +32,7 @@
           <el-menu-item index="1">
             <i class="el-icon-document"></i>
 
-            <span slot="title">房东信息</span>
+            <span slot="title">中介经理信息</span>
 
           </el-menu-item>
 

@@ -52,7 +52,7 @@ export default {
         const { data } = await this.$axios.post('/landlord/listUser', {});
         this.landlord = data;
       } catch (error) {
-        console.log("查询房东信息异常：", error);
+        console.log("查询中介经理信息异常：", error);
       }
     },
   }
