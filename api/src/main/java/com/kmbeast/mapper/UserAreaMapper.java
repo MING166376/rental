@@ -5,6 +5,7 @@ import com.kmbeast.pojo.dto.AreaQueryDto;
 import com.kmbeast.pojo.dto.UserAreaQueryDto;
 import com.kmbeast.pojo.entity.Area;
 import com.kmbeast.pojo.entity.UserArea;
+import com.kmbeast.pojo.vo.UserAreaVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,5 +20,7 @@ public interface UserAreaMapper extends BaseMapper<UserArea> {
     List<UserArea> list(UserAreaQueryDto UserAreaQueryDto);
 
     Integer listCount(UserAreaQueryDto UserAreaQueryDto);
+
+    List<UserAreaVO> listUser(UserAreaQueryDto userAreaQueryDto);
 
 }

@@ -5,6 +5,7 @@ import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.UserAreaQueryDto;
 import com.kmbeast.pojo.entity.UserArea;
+import com.kmbeast.pojo.vo.UserAreaVO;
 import com.kmbeast.service.UserAreaService;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +49,9 @@ public class UserAreaController {
     @Pager
     @PostMapping(value = "/listUser")
     @ResponseBody
-    public Result<List<UserArea>> listUser(@RequestBody UserAreaQueryDto userAreaQueryDto) {
+    public Result<List<UserAreaVO>> listUser(@RequestBody UserAreaQueryDto userAreaQueryDto) {
         userAreaQueryDto.setUserId(LocalThreadHolder.getUserId()); // 数据隔离
-        return userAreaService.list(userAreaQueryDto);
+        return userAreaService.listUser(userAreaQueryDto);
     }
 
     /**

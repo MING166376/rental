@@ -2,7 +2,15 @@
   <div class="app-container">
     <!-- 顶部导航栏 -->
     <header class="app-header">
-      {{ userArea }}
+      <div class="position">
+        <i class="el-icon-location"></i>
+
+        <span>{{ userArea[0].topAreaName }} · {{ userArea[0].cityAreaName }}</span>
+
+        <span @click="changeAddress" class="change-address">更换常居住地</span>
+
+      </div>
+
       <div class="header-content">
         <div class="main-nav">
           <Logo class="logo" :logoSize="Number(46)" :fontSize="Number(20)" textColor="rgb(51,51,51)"
@@ -161,7 +169,7 @@
               <Tab :buttons="[
                                 { label: '女', value: '1' },
                                 { label: '男', value: '2' }
-                            ]" :initialActive="String(apiParam.gender) || '2'" @change="handleGenderChange"/>
+                            ]" :initialActive="String(apiParam.gender) || '2'" @change="handleGenderChange" />
             </div>
 
             <div class="form-group">
@@ -231,7 +239,9 @@
       <span slot="footer" class="dialog-footer">
                 <span class="primary-bt" @click="dialogUserArea = false">取消</span>
 
-                <span class="info-bt" @click="confirmUserAreaSet">确定设置</span>
+                <span v-if="userArea.length === 0" class="info-bt" @click="confirmUserAreaSet">确定设置</span>
+
+                <span v-else class="info-bt" @click="confirmUserAreaUpdate">确定修改</span>
 
             </span>
 
@@ -253,7 +263,7 @@ import {
 } from "@/utils/storage"
 
 export default {
-  components: {Logo, AutoInput, Tab},
+  components: { Logo, AutoInput, Tab },
   name: "AppLayout",
   data() {
     return {
@@ -267,7 +277,7 @@ export default {
       dialogUserInfoVisible: false, // 修改信息弹窗开关
       dialogOutOperation: false, // 退出登录弹窗控制开关
       navItems: [
-        {path: '/home', icon: '', title: '首页'},
+        { path: '/home', icon: '', title: '首页' },
       ],
       userInfo: {},
       isAuthChecked: false,
@@ -289,11 +299,32 @@ export default {
     this.fetchUserArea();
   },
   methods: {
+    changeAddress() {
+      this.dialogUserArea = true;
+      this.fetchTopArea();
+      this.topAreaId = this.userArea[0].topAreaId;
+      this.handleAreaChange();
+      this.cityAreaId = this.userArea[0].cityAreaId;
+    },
+    async confirmUserAreaUpdate() {
+      try {
+        const userArea = {
+          id: this.userArea[0].id,
+          areaId: this.cityAreaId,
+        }
+        const { message } = await this.$axios.put('/user-area/update', userArea);
+        this.$message.success(message);
+        this.dialogUserArea = false;
+        this.fetchUserArea();
+      } catch (error) {
+        console.log("修改常居住地异常", error);
+      }
+    },
     // 设置常居住地信息
     async confirmUserAreaSet() {
       try {
-        const userArea = {areaId: this.cityAreaId}
-        const {message} = await this.$axios.post('/user-area/save', userArea);
+        const userArea = { areaId: this.cityAreaId }
+        const { message } = await this.$axios.post('/user-area/save', userArea);
         this.$message.success(message);
         this.dialogUserArea = false;
       } catch (error) {
@@ -303,8 +334,8 @@ export default {
     async handleAreaChange() {
       this.cityAreaId = null;
       try {
-        const areaQueryDto = {parentId: this.topAreaId}
-        const {data} = await this.$axios.post('/area/list', areaQueryDto);
+        const areaQueryDto = { parentId: this.topAreaId }
+        const { data } = await this.$axios.post('/area/list', areaQueryDto);
         this.cityArea = data;
       } catch (error) {
         console.log("查询省份下的市区信息异常：", error);
@@ -312,8 +343,8 @@ export default {
     },
     async fetchTopArea() {
       try {
-        const areaQueryDto = {parentId: 0}
-        const {data} = await this.$axios.post('/area/list', areaQueryDto);
+        const areaQueryDto = { parentId: 0 }
+        const { data } = await this.$axios.post('/area/list', areaQueryDto);
         this.topArea = data;
       } catch (error) {
         console.log("查询省份信息异常：", error);
@@ -322,7 +353,7 @@ export default {
     // 查询用户常居住地信息
     async fetchUserArea() {
       try {
-        const {data} = await this.$axios.post('/user-area/listUser', {});
+        const { data } = await this.$axios.post('/user-area/listUser', {});
         this.userArea = data;
         if (data.length === 0) {
           this.dialogUserArea = data.length === 0;
@@ -357,7 +388,7 @@ export default {
     async handleConfirm() {
       try {
         this.apiParam.avatar = this.avatar;
-        const {data, message} = await this.$axios.put('/user/update', this.apiParam);
+        const { data, message } = await this.$axios.put('/user/update', this.apiParam);
         this.apiParam = data;
         this.$message.success(message);
         this.handleAuthentication();
@@ -382,7 +413,7 @@ export default {
         againPassword: this.$md5(this.$md5(this.againPassword))
       }
       try {
-        const {message} = await this.$axios.put('/user/updatePassword', updatePasswordDto);
+        const { message } = await this.$axios.put('/user/updatePassword', updatePasswordDto);
         this.$notify.success({
           title: '密码修改',
           message: message,
@@ -420,7 +451,7 @@ export default {
         const data = await this.$axios.get('/user/auth');
         if (data.code === 200) {
           this.userInfo = data.data;
-          this.apiParam = {...data.data};
+          this.apiParam = { ...data.data };
           setUserInfo(this.userInfo);
           this.isAuthChecked = true;
         } else {
@@ -467,6 +498,22 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.position {
+  padding: 20px 60px;
+  background-color: rgb(51, 51, 51);
+  color: rgb(255, 255, 255);
+
+  .change-address {
+    font-size: 12px;
+    margin-left: 10px;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(55, 171, 33);
+    }
+  }
+}
+
 .publish-pet-post {
   background-color: rgb(26, 147, 62);
   color: rgb(255, 255, 255);
@@ -490,7 +537,7 @@ export default {
 
 .app-header {
   background-color: rgb(255, 255, 255);
-  padding-inline: 100px;
+  // padding-inline: 100px;
   margin-bottom: 10px;
   z-index: 100;
   position: sticky;

@@ -5,6 +5,7 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.AreaQueryDto;
 import com.kmbeast.pojo.dto.UserAreaQueryDto;
 import com.kmbeast.pojo.entity.UserArea;
+import com.kmbeast.pojo.vo.UserAreaVO;
 
 import java.util.List;
 
@@ -18,5 +19,8 @@ public interface UserAreaService extends IService<UserArea> {
     Result<String> update(UserArea userArea);
 
     Result<String> saveEntity(UserArea userArea);
+
+    Result<List<UserAreaVO>> listUser(UserAreaQueryDto userAreaQueryDto);
+
 
 }

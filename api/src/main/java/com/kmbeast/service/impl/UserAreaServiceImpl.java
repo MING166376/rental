@@ -7,6 +7,7 @@ import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.UserAreaQueryDto;
 import com.kmbeast.pojo.entity.UserArea;
+import com.kmbeast.pojo.vo.UserAreaVO;
 import com.kmbeast.service.UserAreaService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,16 @@ public class UserAreaServiceImpl extends ServiceImpl<UserAreaMapper, UserArea> i
         userArea.setUserId(LocalThreadHolder.getUserId()); // 设置用户ID
         save(userArea);
         return ApiResult.success("常居住地新增成功");
+    }
+
+    /**
+     * 查询用户自己的常居住地
+     * @param userAreaQueryDto 查询条件类
+     * @return Result<List<UserAreaVO>>
+     */
+    @Override
+    public Result<List<UserAreaVO>> listUser(UserAreaQueryDto userAreaQueryDto) {
+        List<UserAreaVO> list = this.baseMapper.listUser(userAreaQueryDto);
+        return ApiResult.success(list);
     }
 }

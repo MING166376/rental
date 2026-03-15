@@ -39,6 +39,18 @@
 
     </select>
 
+    <select id="listUser" resultType="com.kmbeast.pojo.vo.UserAreaVO">
+        SELECT ua.id,
+               ua.area_id AS cityAreaId,
+               a1.id      AS topAreaId,
+               a1.name    AS topAreaName,
+               a2.name    AS cityAreaName
+        FROM `user_area` ua
+                 LEFT JOIN area a2 ON a2.id = ua.area_id
+                 LEFT JOIN area a1 ON a1.id = a2.parent_id
+        WHERE ua.user_id = #{userId}
+    </select>
+
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.kmbeast.pojo.entity.UserArea">
         <id column="id" property="id"/>
