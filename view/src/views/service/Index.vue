@@ -27,8 +27,8 @@
 
     <div class="service-cotainer">
       <div class="left">
-        <el-menu style="border-right: 0;" default-active="2" class="el-menu-vertical-demo" @open="handleOpen"
-                 @close="handleClose">
+        <el-menu @select="select" style="border-right: 0;" default-active="2" class="el-menu-vertical-demo"
+                 @open="handleOpen" @close="handleClose">
           <el-menu-item index="1">
             <i class="el-icon-document"></i>
 
@@ -65,7 +65,7 @@
       </div>
 
       <div class="right">
-
+        <router-view />
       </div>
 
     </div>
@@ -85,6 +85,16 @@ export default {
     this.fetchUserInfo();
   },
   methods: {
+    select(index) {
+      // 路由与菜单index之间的映射
+      const pathsMap = {
+        '1': 'landlord',
+        '2-1': 'house-list',
+        '2-2': 'flow-index',
+        '3': 'house-order-info'
+      }
+      this.$router.push(`/service-center/${pathsMap[index]}`);
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -104,6 +114,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.right {
+  height: calc(100vh - 60px);
+  width: calc(100% - 253px);
+  overflow-y: scroll;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
 .container-center {
   width: 100%;
   height: 100vh;

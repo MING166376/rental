@@ -21,7 +21,25 @@ const routes = [
   {
     path: "/service-center",
     name: 'serviceCenter',
-    component: () => import(`@/views/service/Index.vue`)
+    component: () => import(`@/views/service/Index.vue`),
+    children: [
+      {
+        path: 'landlord',
+        component: () => import(`@/views/service/Landlord.vue`),
+      },
+      {
+        path: 'house-list',
+        component: () => import(`@/views/service/HouseList.vue`),
+      },
+      {
+        path: 'flow-index',
+        component: () => import(`@/views/service/FlowIndex.vue`),
+      },
+      {
+        path: 'house-order-info',
+        component: () => import(`@/views/service/HouseOrderInfo.vue`),
+      }
+    ],
   },
   {
     path: "/reply-landlord",

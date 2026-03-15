@@ -14,6 +14,7 @@ import com.kmbeast.pojo.entity.User;
 import com.kmbeast.pojo.vo.LandlordVO;
 import com.kmbeast.service.LandlordService;
 import com.kmbeast.utils.AssertUtils;
+import com.kmbeast.utils.IdCardValidator;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -71,6 +72,8 @@ public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> i
         AssertUtils.hasText(landlord.getIdcardFront(), "请上传身份证正面照");
         AssertUtils.hasText(landlord.getIdcardOpposite(), "请上传身份证反面照");
         AssertUtils.hasText(landlord.getIdcard(), "请上传身份证号");
+        // 校验身份证号的合法性
+        AssertUtils.isTrue(IdCardValidator.validate(landlord.getIdcard()), "请输入合法的身份证号");
         // 2. 一个人只能有一条房东申请记录
         LandlordQueryDto landlordQueryDto = new LandlordQueryDto();
         landlordQueryDto.setUserId(LocalThreadHolder.getUserId());
@@ -94,6 +97,15 @@ public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> i
     public Result<LandlordVO> listUser(LandlordQueryDto landlordQueryDto) {
         landlordQueryDto.setUserId(LocalThreadHolder.getUserId()); // 设置上用户ID，数据隔离，经过这样处理，用户只能查看到自己名下的房东申请记录
         List<LandlordVO> landlordVOS = this.baseMapper.list(landlordQueryDto);
-        return ApiResult.success(landlordVOS.isEmpty() ? null : landlordVOS.get(0));
+        if (landlordVOS.isEmpty()) {
+            return ApiResult.success();
+        }
+        LandlordVO landlordVO = landlordVOS.get(0);
+        String idcard = landlordVO.getIdcard();
+        // 身份证号脱敏处理
+        String idcardCode = idcard.substring(0, 6) + "****" + idcard.substring(idcard.length() - 2);
+        landlordVO.setIdcard(idcardCode);
+        return ApiResult.success(landlordVO);
     }
+
 }
