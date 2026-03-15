@@ -64,6 +64,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/community-manage",
+        name: '小区管理',
+        show: true,
+        icon: 'el-icon-s-help',
+        component: () => import(`@/views/admin/CommunityManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/evaluations-manage",
         name: '评论管理',
         show: true,

@@ -11,6 +11,7 @@ import com.kmbeast.service.CommunityService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -67,6 +68,7 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
     @Override
     public Result<String> saveEntity(Community community) {
         paramJudge(community);
+        community.setCreateTime(LocalDateTime.now());
         save(community);
         return ApiResult.success("新增成功");
     }
