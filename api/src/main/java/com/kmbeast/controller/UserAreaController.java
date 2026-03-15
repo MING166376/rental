@@ -1,6 +1,7 @@
 package com.kmbeast.controller;
 
 import com.kmbeast.aop.Pager;
+import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.UserAreaQueryDto;
 import com.kmbeast.pojo.entity.UserArea;
@@ -36,6 +37,20 @@ public class UserAreaController {
     @ResponseBody
     public Result<String> update(@RequestBody UserArea userArea) {
         return userAreaService.update(userArea);
+    }
+
+    /**
+     * 查询用户自己的常居住地信息
+     *
+     * @param userAreaQueryDto 查询参数
+     * @return Result<List < UserArea>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listUser")
+    @ResponseBody
+    public Result<List<UserArea>> listUser(@RequestBody UserAreaQueryDto userAreaQueryDto) {
+        userAreaQueryDto.setUserId(LocalThreadHolder.getUserId()); // 数据隔离
+        return userAreaService.list(userAreaQueryDto);
     }
 
     /**

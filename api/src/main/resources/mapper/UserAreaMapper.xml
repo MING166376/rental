@@ -6,11 +6,11 @@
         SELECT ua.* FROM user_area ua
         <where>
             <if test="userId != null">
-                AND ua.userId = #{userId}
+                AND ua.user_id = #{userId}
             </if>
 
             <if test="areaId != null">
-                AND ua.areaId = #{areaId}
+                AND ua.area_id = #{areaId}
             </if>
 
         </where>
@@ -28,11 +28,11 @@
         FROM user_area ua
         <where>
             <if test="userId != null">
-                AND ua.userId = #{userId}
+                AND ua.user_id = #{userId}
             </if>
 
             <if test="areaId != null">
-                AND ua.areaId = #{areaId}
+                AND ua.area_id = #{areaId}
             </if>
 
         </where>

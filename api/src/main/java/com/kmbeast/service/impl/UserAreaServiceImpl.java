@@ -56,6 +56,7 @@ public class UserAreaServiceImpl extends ServiceImpl<UserAreaMapper, UserArea> i
         UserAreaQueryDto.setUserId(LocalThreadHolder.getUserId());
         Integer count = this.baseMapper.listCount(UserAreaQueryDto);
         AssertUtils.isTrue(count == 0, "请不要重复新增常居住地");
+        userArea.setUserId(LocalThreadHolder.getUserId()); // 设置用户ID
         save(userArea);
         return ApiResult.success("常居住地新增成功");
     }
