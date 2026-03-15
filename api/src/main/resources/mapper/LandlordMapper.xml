@@ -15,6 +15,10 @@
                 AND l.is_audit = #{isAudit}
             </if>
 
+            <if test="idcard != null">
+                AND l.idcard LIKE concat('%',#{idcard},'%')
+            </if>
+
         </where>
 
         <if test="current != null and size != null">
@@ -35,6 +39,10 @@
 
             <if test="isAudit != null">
                 AND l.is_audit = #{isAudit}
+            </if>
+
+            <if test="idcard != null">
+                AND l.idcard LIKE concat('%',#{idcard},'%')
             </if>
 
         </where>

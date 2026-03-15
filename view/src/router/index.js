@@ -56,6 +56,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/landlord-manage",
+        name: '房东管理',
+        show: true,
+        icon: 'el-icon-user-solid',
+        component: () => import(`@/views/admin/LandlordManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/evaluations-manage",
         name: '评论管理',
         show: true,

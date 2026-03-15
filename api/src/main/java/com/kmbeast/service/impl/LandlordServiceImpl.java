@@ -3,16 +3,20 @@ package com.kmbeast.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.mapper.LandlordMapper;
+import com.kmbeast.mapper.UserMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.LandlordQueryDto;
 import com.kmbeast.pojo.em.IsAuditEnum;
+import com.kmbeast.pojo.em.RoleEnum;
 import com.kmbeast.pojo.entity.Landlord;
+import com.kmbeast.pojo.entity.User;
 import com.kmbeast.pojo.vo.LandlordVO;
 import com.kmbeast.service.LandlordService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +25,9 @@ import java.util.List;
  */
 @Service
 public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> implements LandlordService {
+
+    @Resource
+    private UserMapper userMapper;
 
     /**
      * 查询房东信息列表
@@ -43,6 +50,11 @@ public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> i
      */
     @Override
     public Result<String> update(Landlord landlord) {
+        // 只能是管理员进行房东信息的审核
+        if (landlord.getIsAudit()) {
+            User user = userMapper.getUserById(LocalThreadHolder.getUserId());// 通过用户ID查询用户信息
+            AssertUtils.equals(user.getRole(), RoleEnum.ADMIN.getRole(), "无操作权限");
+        }
         updateById(landlord);
         return ApiResult.success("修改成功");
     }
