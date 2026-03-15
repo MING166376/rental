@@ -1,0 +1,87 @@
+package com.kmbeast.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kmbeast.context.LocalThreadHolder;
+import com.kmbeast.mapper.LandlordMapper;
+import com.kmbeast.pojo.api.ApiResult;
+import com.kmbeast.pojo.api.Result;
+import com.kmbeast.pojo.dto.LandlordQueryDto;
+import com.kmbeast.pojo.em.IsAuditEnum;
+import com.kmbeast.pojo.entity.Landlord;
+import com.kmbeast.pojo.vo.LandlordVO;
+import com.kmbeast.service.LandlordService;
+import com.kmbeast.utils.AssertUtils;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * 房东业务逻辑接口实现类
+ */
+@Service
+public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> implements LandlordService {
+
+    /**
+     * 查询房东信息列表
+     *
+     * @param landlordQueryDto 查询条件类
+     * @return Result<List < LandlordVO>>
+     */
+    @Override
+    public Result<List<LandlordVO>> list(LandlordQueryDto landlordQueryDto) {
+        List<LandlordVO> landlordVOS = this.baseMapper.list(landlordQueryDto);
+        Integer count = this.baseMapper.listCount(landlordQueryDto);
+        return ApiResult.success(landlordVOS, count);
+    }
+
+    /**
+     * 修改信息
+     *
+     * @param landlord 实体信息
+     * @return Result<String>
+     */
+    @Override
+    public Result<String> update(Landlord landlord) {
+        updateById(landlord);
+        return ApiResult.success("修改成功");
+    }
+
+    /**
+     * 申请成为房东
+     *
+     * @param landlord 实体信息
+     * @return Result<String>
+     */
+    @Override
+    public Result<String> saveEntity(Landlord landlord) {
+        // 1. 参数校验
+        AssertUtils.hasText(landlord.getIdcardFront(), "请上传身份证正面照");
+        AssertUtils.hasText(landlord.getIdcardOpposite(), "请上传身份证反面照");
+        AssertUtils.hasText(landlord.getIdcardFront(), "请上传身份证号");
+        // 2. 一个人只能有一条房东申请记录
+        LandlordQueryDto landlordQueryDto = new LandlordQueryDto();
+        landlordQueryDto.setUserId(LocalThreadHolder.getUserId());
+        Integer count = this.baseMapper.listCount(landlordQueryDto);
+        AssertUtils.isTrue(count == 0, "请勿重复申请");
+        // 3. 补充初始数据
+        landlord.setUserId(LocalThreadHolder.getUserId()); // 设置申请人用户ID
+        landlord.setCreateTime(LocalDateTime.now()); // 设置申请时间
+        landlord.setIsAudit(IsAuditEnum.STATUS_2.getType()); // 初始设置为未审核状态
+        save(landlord);
+        return ApiResult.success("申请成功，请等待审核");
+    }
+
+    /**
+     * 查询用户自己的申请记录
+     *
+     * @param landlordQueryDto 查询条件类
+     * @return Result<LandlordVO>
+     */
+    @Override
+    public Result<LandlordVO> listUser(LandlordQueryDto landlordQueryDto) {
+        landlordQueryDto.setUserId(LocalThreadHolder.getUserId()); // 设置上用户ID，数据隔离，经过这样处理，用户只能查看到自己名下的房东申请记录
+        List<LandlordVO> landlordVOS = this.baseMapper.list(landlordQueryDto);
+        return ApiResult.success(landlordVOS.isEmpty() ? null : landlordVOS.get(0));
+    }
+}
