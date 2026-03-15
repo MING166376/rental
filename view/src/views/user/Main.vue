@@ -674,7 +674,8 @@ export default {
 
 .app-main {
   flex: 1;
-  margin-inline: 120px;
+  // margin-inline: 120px;
+  margin-inline: 20px;
   box-sizing: border-box;
   padding: 10px 30px;
   background-color: rgb(255, 255, 255);

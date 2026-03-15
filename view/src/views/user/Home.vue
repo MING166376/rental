@@ -1,25 +1,65 @@
 <template>
-    <div>
-        首页
+  <div>
+    <div class="reply" v-if="landlord === null">
+      <div class="title">
+        空置房别闲置，你的房源值得更多租客看见
+      </div>
+
+      <div class="content">
+        告别传统贴条招租，平台千万级流量曝光，精准匹配优质租客，让空房快速 “活” 起来，租金收益不空置。
+        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为房东</span>
+
+      </div>
+
     </div>
+
+  </div>
+
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-
-        }
-    },
-    created() {
-
-    },
-    methods: {
-
+  data() {
+    return {
+      landlord: {},
     }
+  },
+  created() {
+    this.fetchLandlordData();
+  },
+  methods: {
+    reply() {
+      window.open('/reply-landlord', '_blank');
+    },
+    async fetchLandlordData() {
+      try {
+        const { data } = await this.$axios.post('/landlord/listUser', {});
+        this.landlord = data;
+        console.log(this.landlord);
+
+      } catch (error) {
+        console.log("查询房东申请信息异常：", error);
+      }
+    },
+  }
 }
 </script>
 
 <style scoped lang="scss">
+.reply {
+  background-color: rgb(250, 250, 250);
+  padding: 10px 20px;
+  box-sizing: border-box;
 
+  .title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: rgb(90, 89, 89);
+  }
+
+  .content {
+    font-size: 14px;
+  }
+}
 </style>

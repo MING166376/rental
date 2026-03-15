@@ -58,7 +58,7 @@ public class LandlordServiceImpl extends ServiceImpl<LandlordMapper, Landlord> i
         // 1. 参数校验
         AssertUtils.hasText(landlord.getIdcardFront(), "请上传身份证正面照");
         AssertUtils.hasText(landlord.getIdcardOpposite(), "请上传身份证反面照");
-        AssertUtils.hasText(landlord.getIdcardFront(), "请上传身份证号");
+        AssertUtils.hasText(landlord.getIdcard(), "请上传身份证号");
         // 2. 一个人只能有一条房东申请记录
         LandlordQueryDto landlordQueryDto = new LandlordQueryDto();
         landlordQueryDto.setUserId(LocalThreadHolder.getUserId());
