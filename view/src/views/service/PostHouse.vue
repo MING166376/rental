@@ -10,13 +10,13 @@
 
     </div>
 
-    <!-- 小区信息区域 -->
+    <!-- 房屋信息区域 -->
     <div class="update-area">
-      <!-- 小区名称 -->
+      <!-- 房屋名称 -->
       <div class="area">
-        <span>小区名</span>
+        <span>房屋名</span>
 
-        <el-input style="width: 600px;" v-model="communityInfo.name" placeholder="小区名"></el-input>
+        <el-input style="width: 600px;" v-model="communityInfo.name" placeholder="请输入，30个字以内"></el-input>
 
       </div>
 
@@ -31,7 +31,7 @@
 
           </el-select>
 
-          <el-select style="width: 290px;" v-model="cityAreaId" placeholder="请选择">
+          <el-select @change="fetchCommunity" style="width: 290px;" v-model="cityAreaId" placeholder="请选择">
             <el-option v-for="item in cityArea" :key="item.id" :label="item.name" :value="item.id">
             </el-option>
 
@@ -46,7 +46,7 @@
         <span>封面</span>
 
         <div class="user-avatar">
-          <p style="font-size: 12px;color: rgb(0, 119, 184);">点击📷处即可上传小区封面</p>
+          <p style="font-size: 12px;color: rgb(0, 119, 184);">点击📷处即可上传房屋封面</p>
 
           <img v-if="cover" style="width: 290px;height: 170px;border-radius: 5px;" :src="cover || ''" alt="">
           <el-upload class="avatar-uploader" action="api/v1.0/house-rental-api/file/upload"
@@ -79,9 +79,9 @@
 
       </div>
 
-      <!-- 小区介绍 -->
+      <!-- 房屋介绍 -->
       <div class="area">
-        <span>小区介绍</span>
+        <span>房屋介绍</span>
 
         <div>
           <Editor style="width: 700px;" :receiveContent="content" height="300px"
@@ -90,10 +90,54 @@
 
       </div>
 
+      <!-- 所属小区 -->
+      <div class="area">
+        <span>所属小区</span>
+
+        <div style="display: flex;gap: 20px;">
+          <el-select @change="fetchCommunity" style="width: 290px;" v-model="house.communityId"
+                     placeholder="请选择">
+            <el-option v-for="item in communityList" :key="item.id" :label="item.name" :value="item.id">
+            </el-option>
+
+          </el-select>
+
+        </div>
+
+      </div>
+
+      <!-- 房屋类型 -->
+      <div class="area">
+        <span>房屋类型</span>
+
+        <Tab :buttons="houseTypeList" :initialActive="house.typeId" @change="handleChange" />
+      </div>
+
+      <!-- 房屋朝向 -->
+      <div class="area">
+        <span>房屋类型</span>
+
+        <Tab :buttons="houseDirectionList" :initialActive="house.directionId" @change="handleDirectionChange" />
+      </div>
+
+      <!-- 房屋户型 -->
+      <div class="area">
+        <span>房屋户型</span>
+
+        <Tab :buttons="houseSizedList" :initialActive="house.sizedId" @change="handleSizedChange" />
+      </div>
+
+      <!-- 房屋押金方式 -->
+      <div class="area">
+        <span>房屋押金方式</span>
+
+        <Tab :buttons="houseDepositMethodList" :initialActive="house.depositMethodId" @change="handleSizedChange" />
+      </div>
+
       <div class="area">
         <div class="info-bt" @click="updateCommunity"
              style="text-align: center;width: 200px;margin-left: 130px;margin-top: 30px;">
-          修改小区信息
+          新增房源信息
         </div>
 
       </div>
@@ -106,12 +150,15 @@
 
 <script>
 import Editor from "@/components/Editor.vue";
+import Tab from "@/components/Tab.vue";
 export default {
-  components: { Editor },
+  components: { Editor, Tab },
   name: "CommunityUpdate",
   data() {
     return {
+      communityList: [], // 小区数据
       communityInfo: {},
+      house: {},
       name: null,
       cover: '',
       dialogImageUrl: '',
@@ -122,13 +169,33 @@ export default {
       topAreaId: null, // 省份信息
       cityAreaId: null, // 城市ID
       content: '',
+      houseTypeList: [], // 房屋类型数组
+      houseDirectionList: [], // 房屋朝向数组
+      houseSizedList: [], // 房屋户型数组
+      houseDepositMethodList: [], // 房屋押金方式数组
     }
   },
   created() {
     this.paramGet();
     this.fetchTopArea();
+    this.fetchHouseType();
+    this.fetchHouseDirection();
+    this.fetchHouseSized();
+    this.fetchHouseDepositMethod();
   },
   methods: {
+    // 房屋类型选择
+    handleChange(obj) {
+      this.house.typeId = obj.value;
+    },
+    // 朝向选择
+    handleDirectionChange(obj) {
+      this.house.directionId = obj.value;
+    },
+    // 户型选择
+    handleSizedChange(obj) {
+      this.house.sizedId = obj.value;
+    },
     async paramGet() {
       const jsonCommunityInfo = localStorage.getItem('communityInfo');
       this.communityInfo = JSON.parse(jsonCommunityInfo);
@@ -142,6 +209,50 @@ export default {
         }
       });
     },
+    async fetchCommunity() {
+      try {
+        const { data } = await this.$axios.post('/community/list', { areaId: this.cityAreaId });
+        this.communityList = data;
+      } catch (error) {
+        console.log("查询市区下面的小区信息异常：", error);
+      }
+    },
+    // 查询房屋类型
+    async fetchHouseType() {
+      try {
+        const { data } = await this.$axios.get('/house/houseTypeList');
+        this.houseTypeList = data;
+      } catch (error) {
+        console.log("查询房屋类型异常：", error);
+      }
+    },
+    // 查询房屋朝向
+    async fetchHouseDirection() {
+      try {
+        const { data } = await this.$axios.get('/house/houseDirectionList');
+        this.houseDirectionList = data;
+      } catch (error) {
+        console.log("查询房屋朝向异常：", error);
+      }
+    },
+    // 查询房屋户型
+    async fetchHouseSized() {
+      try {
+        const { data } = await this.$axios.get('/house/houseSizedList');
+        this.houseSizedList = data;
+      } catch (error) {
+        console.log("查询房屋户型异常：", error);
+      }
+    },
+    // 查询房屋押金方式数组
+    async fetchHouseDepositMethod() {
+      try {
+        const { data } = await this.$axios.get('/house/houseDepositMethodList');
+        this.houseDepositMethodList = data;
+      } catch (error) {
+        console.log("查询房屋户型异常：", error);
+      }
+    },
     async updateCommunity() {
       try {
         this.communityInfo.cover = this.cover;
@@ -150,17 +261,17 @@ export default {
         this.communityInfo.covers = this.coverList.length === 0 ? null : this.coverList.map(entity => entity.url).join(',');
         await this.$axios.put('/community/update', this.communityInfo);
         this.$notify({
-          title: '小区修改',
+          title: '房屋修改',
           type: 'success',
-          message: '小区修改成功',
+          message: '房屋修改成功',
           position: 'buttom-right',
           suration: 1000,
         })
         this.toLastPage();
       } catch (error) {
-        console.log("修改小区信息异常：", error);
+        console.log("修改房屋信息异常：", error);
         this.$notify({
-          title: '小区修改',
+          title: '房屋修改',
           type: 'info',
           message: error.message,
           position: 'buttom-right',

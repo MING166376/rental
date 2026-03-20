@@ -6,6 +6,7 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseService;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,50 @@ public class HouseController {
     @ResponseBody
     public Result<String> update(@RequestBody House house) {
         return houseService.update(house);
+    }
+
+    /**
+     * 查询房屋类型列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseTypeList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseTypeList() {
+        return houseService.houseTypeList();
+    }
+
+    /**
+     * 查询房屋朝向列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseDirectionList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseDirectionList() {
+        return houseService.houseDirectionList();
+    }
+
+    /**
+     * 查询房屋户型列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseSizedList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseSizedList() {
+        return houseService.houseSizedList();
+    }
+
+    /**
+     * 查询房屋押金方式列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseDepositMethodList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseDepositMethodList() {
+        return houseService.houseDepositMethodList();
     }
 
     /**

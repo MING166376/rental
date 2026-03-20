@@ -8,20 +8,21 @@ import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.dto.LandlordQueryDto;
-import com.kmbeast.pojo.em.HouseDepositEnum;
-import com.kmbeast.pojo.em.HouseDirectionEnum;
-import com.kmbeast.pojo.em.HouseFitmentEnum;
+import com.kmbeast.pojo.em.*;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
 import com.kmbeast.pojo.vo.LandlordVO;
+import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 房屋业务逻辑接口实现类
@@ -124,5 +125,57 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         house.setCreateTime(LocalDateTime.now()); // 设置上当前的操作时间
         save(house);
         return ApiResult.success("房屋新增成功");
+    }
+
+    /**
+     * 查询房屋类型列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseTypeList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseTypeEnum.values())
+                .map(houseTypeEnum -> new SelectedVO(houseTypeEnum.getType(), houseTypeEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋朝向列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseDirectionList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseDirectionEnum.values())
+                .map(houseDirectionEnum -> new SelectedVO(houseDirectionEnum.getType(), houseDirectionEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋户型列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseSizedList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseSizedEnum.values())
+                .map(houseSizedEnum -> new SelectedVO(houseSizedEnum.getType(), houseSizedEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋押金方式列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseDepositMethodList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseDepositEnum.values())
+                .map(houseDepositEnum -> new SelectedVO(houseDepositEnum.getType(), houseDepositEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
     }
 }
