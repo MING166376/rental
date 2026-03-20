@@ -12,6 +12,7 @@ import com.kmbeast.pojo.em.*;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
 import com.kmbeast.pojo.vo.LandlordVO;
+import com.kmbeast.pojo.vo.LivingFacilityVO;
 import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
@@ -123,6 +124,7 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         AssertUtils.isTrue(landlordVO.getIsAudit(), "房东认证信息待审核中，请稍后再试");
         house.setLandlordId(landlordVO.getId()); // 认证通过，设置上查出来的房东ID
         house.setCreateTime(LocalDateTime.now()); // 设置上当前的操作时间
+        house.setStatus(HouseStatusEnum.STATUS_1.getType()); // 刚开始新增的房屋信息就是待租状态
         save(house);
         return ApiResult.success("房屋新增成功");
     }
@@ -177,5 +179,57 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
                 .map(houseDepositEnum -> new SelectedVO(houseDepositEnum.getType(), houseDepositEnum.getDetail()))
                 .collect(Collectors.toList());
         return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋是否临近地铁列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseSubwayList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(IsSubwayEnum.values())
+                .map(isSubwayEnum -> new SelectedVO(isSubwayEnum.getType(), isSubwayEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋装修状态
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseFitmentStatusList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseFitmentEnum.values())
+                .map(houseFitmentEnum -> new SelectedVO(houseFitmentEnum.getType(), houseFitmentEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋租赁方式
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseRentalTypeList() {
+        List<SelectedVO> selectedVOS = Arrays.stream(RentalTypeEnum.values())
+                .map(rentalTypeEnum -> new SelectedVO(rentalTypeEnum.getType(), rentalTypeEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋生活设施配置信息项
+     *
+     * @return Result<List < LivingFacilityVO>> 响应结果
+     */
+    @Override
+    public Result<List<LivingFacilityVO>> houseLivingFacilityList() {
+        List<LivingFacilityVO> livingFacilityVOS = Arrays.stream(LivingFacilitiesEnum.values())
+                .map(livingFacilitiesEnum -> new LivingFacilityVO(livingFacilitiesEnum.getType(), livingFacilitiesEnum.getSelected()))
+                .collect(Collectors.toList());
+        return ApiResult.success(livingFacilityVOS);
     }
 }

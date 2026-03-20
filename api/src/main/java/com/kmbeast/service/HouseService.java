@@ -5,6 +5,7 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.LivingFacilityVO;
 import com.kmbeast.pojo.vo.SelectedVO;
 
 import java.util.List;
@@ -28,5 +29,12 @@ public interface HouseService extends IService<House> {
 
     Result<List<SelectedVO>> houseDepositMethodList();
 
+    Result<List<SelectedVO>> houseSubwayList();
+
+    Result<List<SelectedVO>> houseFitmentStatusList();
+
+    Result<List<SelectedVO>> houseRentalTypeList();
+
+    Result<List<LivingFacilityVO>> houseLivingFacilityList();
 
 }

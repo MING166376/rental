@@ -6,6 +6,7 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.LivingFacilityVO;
 import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseService;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +94,50 @@ public class HouseController {
     @ResponseBody
     public Result<List<SelectedVO>> houseDepositMethodList() {
         return houseService.houseDepositMethodList();
+    }
+
+    /**
+     * 查询房屋是否临近地铁列表
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseSubwayList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseSubwayList() {
+        return houseService.houseSubwayList();
+    }
+
+    /**
+     * 查询房屋装修状态
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseFitmentStatusList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseFitmentStatusList() {
+        return houseService.houseFitmentStatusList();
+    }
+
+    /**
+     * 查询房屋租赁方式
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseRentalTypeList")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseRentalTypeList() {
+        return houseService.houseRentalTypeList();
+    }
+
+    /**
+     * 查询房屋生活设施配置信息项
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseLivingFacilityList")
+    @ResponseBody
+    public Result<List<LivingFacilityVO>> houseLivingFacilityList() {
+        return houseService.houseLivingFacilityList();
     }
 
     /**

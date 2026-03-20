@@ -105,7 +105,7 @@ public class House {
     /**
      * 生活设施（存储的是JSON字符串）
      */
-    private Integer livingFacilities;
+    private String livingFacilities;
     /**
      * 创建时间
      */
