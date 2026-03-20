@@ -28,6 +28,10 @@ const routes = [
         component: () => import(`@/views/service/Landlord.vue`),
       },
       {
+        path: 'post-house',
+        component: () => import(`@/views/service/PostHouse.vue`),
+      },
+      {
         path: 'house-list',
         component: () => import(`@/views/service/HouseList.vue`),
       },
@@ -80,7 +84,7 @@ const routes = [
       },
       {
         path: "/landlord-manage",
-        name: '中介经理管理',
+        name: '房东管理',
         show: true,
         icon: 'el-icon-user-solid',
         component: () => import(`@/views/admin/LandlordManage.vue`),

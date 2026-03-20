@@ -1,30 +1,16 @@
-package com.kmbeast.pojo.entity;
+package com.kmbeast.pojo.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
- * 房屋实体，与数据库的房屋信息表（house）对应
+ * 房屋查询条件类
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName(value = "house")
-public class House {
-
-    /**
-     * ID
-     */
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+public class HouseQueryDto extends QueryDto {
     /**
      * 房屋名
      */
@@ -42,41 +28,33 @@ public class House {
      */
     private Integer communityId;
     /**
-     * 房屋描述
-     */
-    private String detail;
-    /**
-     * 封面
-     */
-    private String cover;
-    /**
-     * 房屋实况图列表
-     */
-    private String covers;
-    /**
      * 房屋类型ID，外键，比如商品房，通过枚举类定义
      */
     private Integer typeId;
     /**
-     * 面积
+     * 最小面积
      */
-    private Double sizeNumber;
+    private Double minSizeNumber;
+    /**
+     * 最大面积
+     */
+    private Double maxSizeNumber;
     /**
      * 方向ID，外键，比如坐北朝南，通过枚举类定义
      */
     private Integer directionId;
     /**
-     * 楼层
-     */
-    private String floor;
-    /**
      * 户型ID，外键，比如一室一厅，通过枚举类定义
      */
     private Integer sizedId;
     /**
-     * 租金
+     * 最小租金
      */
-    private BigDecimal rent;
+    private BigDecimal minRent;
+    /**
+     * 最大租金
+     */
+    private BigDecimal maxRent;
     /**
      * 押金方式ID，外键，比如押一付一，通过定义枚举类
      */
@@ -91,10 +69,6 @@ public class House {
      */
     private Boolean isSubway;
     /**
-     * 临近地铁线路（如果进地铁，这个值才需要设置）
-     */
-    private Integer subwayLine;
-    /**
      * 装修状态ID，外键，比如毛坯房
      */
     private Integer fitmentStatusId;
@@ -102,14 +76,4 @@ public class House {
      * 租赁类型（1：整租；2：合租）
      */
     private Integer rentalType;
-    /**
-     * 生活设施（存储的是JSON字符串）
-     */
-    private Integer livingFacilities;
-    /**
-     * 创建时间
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
-
 }

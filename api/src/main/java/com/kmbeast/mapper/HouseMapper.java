@@ -1,0 +1,23 @@
+package com.kmbeast.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.kmbeast.pojo.dto.AreaQueryDto;
+import com.kmbeast.pojo.dto.HouseQueryDto;
+import com.kmbeast.pojo.entity.Area;
+import com.kmbeast.pojo.entity.House;
+import com.kmbeast.pojo.vo.HouseListItemVO;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+/**
+ * 房屋持久化接口
+ */
+@Mapper
+public interface HouseMapper extends BaseMapper<House> {
+
+    List<HouseListItemVO> list(HouseQueryDto houseQueryDto);
+
+    Integer listCount(HouseQueryDto houseQueryDto);
+
+}

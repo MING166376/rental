@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kmbeast.mapper.HouseMapper">
+
+    <select id="list" resultMap="HouseListItemResultMap">
+        SELECT h.name,
+        h.cover,
+        h.size_number,
+        c.name AS community_name,
+        a.name AS city_area_name,
+        h.direction_id,
+        h.fitment_status_id,
+        h.rent,
+        h.deposit_method_id
+        FROM house h
+        LEFT JOIN community c ON c.id = h.community_id
+        LEFT JOIN area a ON a.id = h.area_id
+        <where>
+            <if test="name != null and name != ''">
+                AND h.name LIKE concat('%',#{name},'%')
+            </if>
+
+            <if test="landlordId != null">
+                AND h.landlord = #{landlordId}
+            </if>
+
+            <if test="areaId != null">
+                AND h.area_id = #{areaId}
+            </if>
+
+            <if test="communityId != null">
+                AND h.community_id = #{communityId}
+            </if>
+
+            <if test="typeId != null">
+                AND h.type_id = #{typeId}
+            </if>
+
+            <if test="minSizeNumber != null and maxSizeNumber != null">
+                AND h.size_number BETWEEN #{minSizeNumber} AND #{maxSizeNumber}
+            </if>
+
+            <if test="directionId != null">
+                AND h.direction_id = #{directionId}
+            </if>
+
+            <if test="sizedId != null">
+                AND h.sized_id = #{sizedId}
+            </if>
+
+            <if test="minRent != null and maxRent != null">
+                AND h.rent BETWEEN #{minRent} AND #{maxRent}
+            </if>
+
+            <if test="depositMethodId != null">
+                AND h.deposit_method_id = #{depositMethodId}
+            </if>
+
+            <if test="status != null">
+                AND h.status = #{status}
+            </if>
+
+            <if test="isSubway != null">
+                AND h.is_subway = #{isSubway}
+            </if>
+
+            <if test="fitmentStatusId != null">
+                AND h.fitment_status_id = #{fitmentStatusId}
+            </if>
+
+            <if test="rentalType != null">
+                AND h.rental_type = #{rentalType}
+            </if>
+
+        </where>
+
+        <if test="current != null and size != null">
+            LIMIT #{current},#{size}
+        </if>
+
+    </select>
+
+    <!--满足分页条件的数据总项-->
+    <select id="listCount" resultType="integer">
+
+        SELECT COUNT(*)
+        FROM house h
+        <where>
+            <if test="name != null and name != ''">
+                AND h.name LIKE concat('%',#{name},'%')
+            </if>
+
+            <if test="landlordId != null">
+                AND h.landlord = #{landlordId}
+            </if>
+
+            <if test="areaId != null">
+                AND h.area_id = #{areaId}
+            </if>
+
+            <if test="communityId != null">
+                AND h.community_id = #{communityId}
+            </if>
+
+            <if test="typeId != null">
+                AND h.type_id = #{typeId}
+            </if>
+
+            <if test="minSizeNumber != null and maxSizeNumber != null">
+                AND h.size_number BETWEEN #{minSizeNumber} AND #{maxSizeNumber}
+            </if>
+
+            <if test="directionId != null">
+                AND h.direction_id = #{directionId}
+            </if>
+
+            <if test="sizedId != null">
+                AND h.sized_id = #{sizedId}
+            </if>
+
+            <if test="minRent != null and maxRent != null">
+                AND h.rent BETWEEN #{minRent} AND #{maxRent}
+            </if>
+
+            <if test="depositMethodId != null">
+                AND h.deposit_method_id = #{depositMethodId}
+            </if>
+
+            <if test="status != null">
+                AND h.status = #{status}
+            </if>
+
+            <if test="isSubway != null">
+                AND h.is_subway = #{isSubway}
+            </if>
+
+            <if test="fitmentStatusId != null">
+                AND h.fitment_status_id = #{fitmentStatusId}
+            </if>
+
+            <if test="rentalType != null">
+                AND h.rental_type = #{rentalType}
+            </if>
+
+        </where>
+
+    </select>
+
+    <resultMap id="HouseListItemResultMap" type="com.kmbeast.pojo.vo.HouseListItemVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="cover" property="cover"/>
+        <result column="size_number" property="sizeNumber"/>
+        <result column="community_name" property="communityName"/>
+        <result column="city_area_name" property="cityAreaName"/>
+        <result column="direction_id" property="directionId"/>
+        <result column="direction_name" property="directionName"/>
+        <result column="fitment_status_id" property="fitmentStatusId"/>
+        <result column="fitment_status_name" property="fitmentStatusName"/>
+        <result column="rent" property="rent"/>
+        <result column="deposit_method_id" property="depositMethodId"/>
+        <result column="deposit_method_name" property="depositMethodName"/>
+    </resultMap>
+
+</mapper>

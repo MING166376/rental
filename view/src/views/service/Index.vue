@@ -32,7 +32,7 @@
           <el-menu-item index="1">
             <i class="el-icon-document"></i>
 
-            <span slot="title">中介经理信息</span>
+            <span slot="title">房东信息</span>
 
           </el-menu-item>
 
@@ -45,9 +45,11 @@
             </template>
 
             <el-menu-item-group>
-              <el-menu-item index="2-1">我发布的房源</el-menu-item>
+              <el-menu-item index="2-1">发布房源</el-menu-item>
 
-              <el-menu-item index="2-2">流量统计</el-menu-item>
+              <el-menu-item index="2-2">我发布的房源</el-menu-item>
+
+              <el-menu-item index="2-3">流量统计</el-menu-item>
 
             </el-menu-item-group>
 
@@ -89,8 +91,9 @@ export default {
       // 路由与菜单index之间的映射
       const pathsMap = {
         '1': 'landlord',
-        '2-1': 'house-list',
-        '2-2': 'flow-index',
+        '2-1': 'post-house',
+        '2-2': 'house-list',
+        '2-3': 'flow-index',
         '3': 'house-order-info'
       }
       this.$router.push(`/service-center/${pathsMap[index]}`);
