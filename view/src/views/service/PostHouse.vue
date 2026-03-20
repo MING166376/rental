@@ -1,10 +1,16 @@
 <template>
-  <div class="community-container">
+  <div class="house-container">
     <div class="nav">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item style="cursor: pointer;" @click.native="toLastPage">房源管理</el-breadcrumb-item>
+        <el-breadcrumb-item style="cursor: pointer;" @click.native="toLastPage">
+          <span style="color: rgb(51,51,51);font-size: 18px;">房源管理</span>
 
-        <el-breadcrumb-item>房源新增</el-breadcrumb-item>
+        </el-breadcrumb-item>
+
+        <el-breadcrumb-item>
+          <span style="color: rgb(51,51,51);font-size: 18px;">新增房屋信息</span>
+
+        </el-breadcrumb-item>
 
       </el-breadcrumb>
 
@@ -84,8 +90,8 @@
       <div class="area">
         <span>房屋介绍</span>
 
-        <div style="background-color: rgba(35, 170, 242,0.2);padding: 10px;">
-          <Editor style="width: 700px;" :receiveContent="content" height="300px"
+        <div style="background-color: rgba(35, 170, 242,0.2);padding: 1px;">
+          <Editor style="width: 600px;" :receiveContent="content" height="300px"
                   api="http://localhost:21090/api/v1.0/house-rental-api/file/upload" @on-listener="onListener" />
         </div>
 
@@ -204,8 +210,6 @@
 
         <div style="display: flex;align-items: center;">
           <el-input v-model="house.floor" placeholder="输入（高/中/低）"></el-input>
-
-          <div style="width: 100px;font-size: 24px;">/楼层</div>
 
         </div>
 
@@ -498,32 +502,33 @@ export default {
 }
 
 .update-area {
-  padding-block: 30px;
+  padding-block: 10px;
   background-color: rgb(255, 255, 255);
 }
 
 .area {
-  margin-block: 10px;
   display: flex;
   justify-content: left;
   align-items: center;
+  gap: 10px;
+  margin-top: 6px;
 
   span {
-    width: 120px;
+    width: 150px;
     display: inline-block;
     text-align: right;
     margin-right: 10px;
-    font-size: 12px;
+    font-size: 14px;
     color: rgb(51, 51, 51);
   }
 }
 
-.community-container {
-  padding: 10px 24px;
+.house-container {
+
   box-sizing: border-box;
 
   .nav {
-    background-color: rgb(246, 247, 248);
+    background-color: rgb(220,220,220);
     padding: 12px 20px;
     border-bottom: 1px solid rgb(230, 230, 230);
   }

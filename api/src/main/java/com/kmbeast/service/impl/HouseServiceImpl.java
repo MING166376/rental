@@ -85,6 +85,7 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
     private void paramJudge(House house) {
         AssertUtils.hasText(house.getName(), "房屋名称不能为空");
         AssertUtils.hasText(house.getCover(), "房屋封面不能为空");
+        AssertUtils.hasText(house.getFloor(), "请填写楼层");
         AssertUtils.hasText(house.getCovers(), "房屋实况图不能为空");
         AssertUtils.notNull(house.getTypeId(), "请设置房屋类型");
         AssertUtils.notNull(house.getSizeNumber(), "请填写房屋产权面积");
@@ -104,6 +105,8 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         String covers = house.getCovers();
         long count = covers.chars().filter(c -> c == ',').count();
         AssertUtils.isTrue(count < 6, "实况图最多上传6张");
+        // 楼层只能设置为高中低
+        AssertUtils.isTrue(house.getFloor().length() <= 1, "楼层只能补充为高或者低、中");
     }
 
     /**

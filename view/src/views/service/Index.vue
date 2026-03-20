@@ -121,22 +121,23 @@ export default {
   height: calc(100vh - 60px);
   width: calc(100% - 253px);
   overflow-y: scroll;
-  padding: 10px;
+  padding: 0 4px;
   box-sizing: border-box;
 }
 
 .container-center {
   width: 100%;
   height: 100vh;
-  background-color: rgb(246, 248, 250);
+  background-color: rgb(240,240,240);
 
   .top {
-    height: 60px;
+    height: 56px;
     width: 100%;
     padding-inline: 20px;
     box-sizing: border-box;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(255,255,255);
     box-shadow: 0 6px 8px rgb(240, 240, 240);
+    margin-bottom: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
