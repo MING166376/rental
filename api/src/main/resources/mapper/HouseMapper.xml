@@ -3,7 +3,9 @@
 <mapper namespace="com.kmbeast.mapper.HouseMapper">
 
     <select id="list" resultMap="HouseListItemResultMap">
-        SELECT h.name,
+        SELECT
+        h.id,
+        h.name,
         h.cover,
         h.size_number,
         c.name AS community_name,
@@ -21,7 +23,7 @@
             </if>
 
             <if test="landlordId != null">
-                AND h.landlord = #{landlordId}
+                AND h.landlord_id = #{landlordId}
             </if>
 
             <if test="areaId != null">
@@ -91,7 +93,7 @@
             </if>
 
             <if test="landlordId != null">
-                AND h.landlord = #{landlordId}
+                AND h.landlord_id = #{landlordId}
             </if>
 
             <if test="areaId != null">

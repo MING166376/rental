@@ -141,6 +141,19 @@ public class HouseController {
     }
 
     /**
+     * 查询房东自己的房屋信息
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/landlordHouseList")
+    @ResponseBody
+    public Result<List<HouseListItemVO>> landlordHouseList(@RequestBody HouseQueryDto houseQueryDto) {
+        return houseService.landlordHouseList(houseQueryDto);
+    }
+
+    /**
      * 查询房屋信息
      *
      * @param houseQueryDto 查询参数
