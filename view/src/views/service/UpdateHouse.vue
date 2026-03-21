@@ -117,39 +117,63 @@
       <div class="area">
         <span>房屋类型</span>
 
-        <Tab :buttons="houseTypeList" :initialActive="house.typeId" @change="handleChange" />
+        <el-radio-group aria-hidden="false" v-model="house.typeId">
+          <el-radio v-for="item in houseTypeList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 房屋朝向 -->
       <div class="area">
-        <span>房屋类型</span>
+        <span>房屋朝向</span>
 
-        <Tab :buttons="houseDirectionList" :initialActive="house.directionId" @change="handleDirectionChange" />
+        <el-radio-group aria-hidden="false" v-model="house.directionId">
+          <el-radio v-for="item in houseDirectionList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 房屋户型 -->
       <div class="area">
         <span>房屋户型</span>
 
-        <Tab :buttons="houseSizedList" :initialActive="house.sizedId" @change="handleSizedChange" />
+        <el-radio-group aria-hidden="false" v-model="house.sizedId">
+          <el-radio v-for="item in houseSizedList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 房屋押金方式 -->
       <div class="area">
         <span>房屋押金方式</span>
 
-        <Tab :buttons="houseDepositMethodList" :initialActive="house.depositMethodId"
-             @change="handleSizedChange" />
+        <el-radio-group aria-hidden="false" v-model="house.depositMethodId">
+          <el-radio v-for="item in houseDepositMethodList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 房屋是否临近地铁 -->
       <div class="area">
         <span>房屋是否临近地铁</span>
 
-        <Tab :buttons="houseSubwayList" :initialActive="house.isSubway" @change="handleSubwayChange" />
+        <el-radio-group aria-hidden="false" v-model="house.isSubway">
+          <el-radio v-for="item in houseSubwayList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
-      <div class="area">
+      <div class="area" v-if="house.isSubway === 1">
         <span>地铁线路</span>
 
         <el-slider style="width: 300px;" :max="10" v-model="house.subwayLine" :step="1" show-stops>
@@ -161,16 +185,24 @@
       <div class="area">
         <span>装修状态</span>
 
-        <Tab :buttons="houseFitmentStatusList" :initialActive="house.fitmentStatusId"
-             @change="handleFitmentStatusChange" />
+        <el-radio-group aria-hidden="false" v-model="house.fitmentStatusId">
+          <el-radio v-for="item in houseFitmentStatusList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 房屋租赁方式 -->
       <div class="area">
         <span>租赁方式</span>
 
-        <Tab :buttons="houseRentalTypeList" :initialActive="house.rentalType"
-             @change="handleRentalTypeChange" />
+        <el-radio-group aria-hidden="false" v-model="house.rentalType">
+          <el-radio v-for="item in houseRentalTypeList" :key="item.value" :label="item.value">{{ item.label
+            }}</el-radio>
+
+        </el-radio-group>
+
       </div>
 
       <!-- 生活设施项配置 -->
@@ -227,9 +259,9 @@
       </div>
 
       <div class="area">
-        <div class="info-bt" @click="saveHouse"
+        <div class="info-bt" @click="updateHouse"
              style="text-align: center;width: 200px;margin-left: 130px;margin-top: 30px;">
-          新增房源信息
+          修改房源信息
         </div>
 
       </div>
@@ -251,13 +283,13 @@ export default {
       communityList: [], // 小区数据
       communityInfo: {},
       house: {
-        typeId: 1, // 类型
-        directionId: 1, // 朝向
-        sizedId: 1, // 户型
-        depositMethodId: 1, // 租金方式
-        isSubway: 1,  // 是否临近地铁
-        fitmentStatusId: 1, // 装修状态
-        rentalType: 1, // 租赁方式
+        typeId: null, // 类型
+        directionId: null, // 朝向
+        sizedId: null, // 户型
+        depositMethodId: null, // 租金方式
+        isSubway: null,  // 是否临近地铁
+        fitmentStatusId: null, // 装修状态
+        rentalType: null, // 租赁方式
       },
       name: null,
       cover: '',
@@ -301,7 +333,36 @@ export default {
     async fetchHouseInfo(id) {
       try {
         const { data } = await this.$axios.get(`/house/getById/${id}`);
-        console.log("当前房屋信息：",data);
+        this.topAreaId = data.topAreaId; // 设置省份
+        this.handleAreaChange(this.topAreaId); // 通过省份ID查询下面所有的市区
+        this.cityAreaId = data.areaId; // 设置市区
+        this.fetchCommunity(this.cityAreaId); // 通过市区ID查询底下全部的小区
+        // 确保所有ID字段是数值类型
+        this.house = {
+          ...data,
+          typeId: Number(data.typeId),
+          directionId: Number(data.directionId),
+          sizedId: Number(data.sizedId),
+          depositMethodId: Number(data.depositMethodId),
+          fitmentStatusId: Number(data.fitmentStatusId),
+          rentalType: Number(data.rentalType),
+          isSubway: data.isSubway ? 1 : 2
+        };
+        this.cover = data.cover;
+        this.house.isSubway = data.isSubway ? 1 : 2;
+        console.log(data);
+        // 处理实况图
+        this.coverList = (data.covers || [])  // 防止 covers 为 null/undefined
+            .split(',')                       // 再拆分成数组（如 ["url1", "url2"]）
+            .filter(url => url.trim() !== '') // 过滤空字符串
+            .map(url => ({
+              uid: Date.now() + Math.floor(Math.random() * 1000),
+              url: url.trim()               // 去除前后空格
+            }));
+        // 设置房屋详情
+        this.content = data.detail;
+        // 设置生活设施
+        this.houseLivingFacilityList = JSON.parse(data.livingFacilities);
       } catch (error) {
         console.log("查询房屋信息异常：", error);
       }
@@ -316,7 +377,7 @@ export default {
     },
     // 房屋是否临近地铁选择
     handleSubwayChange(obj) {
-      this.house.isSubway = Number(obj.value);
+      this.house.isSubway = obj.value;
     },
     // 房屋类型选择
     handleChange(obj) {
@@ -330,9 +391,9 @@ export default {
     handleSizedChange(obj) {
       this.house.sizedId = Number(obj.value);
     },
-    async fetchCommunity() {
+    async fetchCommunity(cityAreaId) {
       try {
-        const { data } = await this.$axios.post('/community/list', { areaId: this.cityAreaId });
+        const { data } = await this.$axios.post('/community/list', { areaId: cityAreaId });
         this.communityList = data;
       } catch (error) {
         console.log("查询市区下面的小区信息异常：", error);
@@ -379,6 +440,8 @@ export default {
       try {
         const { data } = await this.$axios.get('/house/houseSubwayList');
         this.houseSubwayList = data;
+        console.log(this.houseSubwayList);
+
       } catch (error) {
         console.log("查询房屋是否临近地铁异常：", error);
       }
@@ -410,16 +473,26 @@ export default {
         console.log("查询房屋生活设施配置项数组异常：", error);
       }
     },
-    async saveHouse() {
+    async updateHouse() {
       try {
         this.house.cover = this.cover;
         this.house.detail = this.content;
         this.house.areaId = this.cityAreaId;
         this.house.covers = this.coverList.length === 0 ? null : this.coverList.map(entity => entity.url).join(',');
         this.house.livingFacilities = JSON.stringify(this.houseLivingFacilityList);
-        const { message } = await this.$axios.post('/house/save', this.house);
+        const postData = {
+          ...this.house,
+          typeId: Number(this.house.typeId),
+          directionId: Number(this.house.directionId),
+          sizedId: Number(this.house.sizedId),
+          depositMethodId: Number(this.house.depositMethodId),
+          fitmentStatusId: Number(this.house.fitmentStatusId),
+          rentalType: Number(this.house.rentalType),
+          isSubway: Number(this.house.isSubway),
+        };
+        const { message } = await this.$axios.put('/house/update', postData);
         this.$notify({
-          title: '房屋新增',
+          title: '房屋修改',
           type: 'success',
           message: message,
           position: 'buttom-right',
@@ -427,9 +500,9 @@ export default {
         })
         this.toLastPage();
       } catch (error) {
-        console.log("新增房屋信息异常：", error);
+        console.log("修改房屋信息异常：", error);
         this.$notify({
-          title: '房屋新增',
+          title: '房屋修改',
           type: 'info',
           message: error.message,
           position: 'buttom-right',
@@ -445,18 +518,15 @@ export default {
         const areaQueryDto = { parentId: 0 }
         const { data } = await this.$axios.post('/area/list', areaQueryDto);
         this.topArea = data;
-        this.topAreaId = this.communityInfo.topAreaId;
-        this.handleAreaChange();
       } catch (error) {
         console.log("查询省份信息异常：", error);
       }
     },
-    async handleAreaChange() {
+    async handleAreaChange(topAreaId) {
       try {
-        const areaQueryDto = { parentId: this.topAreaId }
+        const areaQueryDto = { parentId: topAreaId }
         const { data } = await this.$axios.post('/area/list', areaQueryDto);
         this.cityArea = data;
-        this.cityAreaId = this.communityInfo.areaId;
       } catch (error) {
         console.log("查询省份下的市区信息异常：", error);
       }
