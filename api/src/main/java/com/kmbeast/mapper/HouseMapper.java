@@ -6,7 +6,9 @@ import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.Area;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.HouseVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,4 +22,5 @@ public interface HouseMapper extends BaseMapper<House> {
 
     Integer listCount(HouseQueryDto houseQueryDto);
 
+    HouseVO getById(@Param(value = "id") Integer id);
 }

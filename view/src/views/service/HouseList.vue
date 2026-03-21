@@ -376,7 +376,6 @@ export default {
       justify-content: left;
       align-items: center;
       gap: 20px;
-      min-width: 500px;
 
       div {
         background-color: rgb(245, 245, 245);

@@ -2,6 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kmbeast.mapper.HouseMapper">
 
+    <select id="getById" resultMap="HouseVOResultMap">
+        SELECT
+            h.id,
+            h.name,
+            h.detail,
+            h.cover,
+            h.covers,
+            h.area_id,
+            h.community_id,
+            h.sized_id,
+            h.type_id,
+            h.size_number,
+            h.direction_id,
+            h.fitment_status_id,
+            h.rent,
+            h.deposit_method_id,
+            h.is_subway,
+            h.floor,
+            h.subway_line,
+            h.living_facilities,
+            h.rental_type,
+            h.status,
+            h.create_time,
+            c.name AS community_name,
+            a.parent_id AS top_area_id,
+            a.name AS city_area_name,
+            l.id AS landlord_id,
+            u.username AS landlord_name,
+            u.avatar AS landlord_avatar
+        FROM house h
+                 LEFT JOIN community c ON c.id = h.community_id
+                 LEFT JOIN area a ON a.id = h.area_id
+                 LEFT JOIN landlord l ON l.id = h.landlord_id
+                 LEFT JOIN user u ON u.id = l.user_id
+        WHERE h.id = #{id}
+
+    </select>
+
     <select id="list" resultMap="HouseListItemResultMap">
         SELECT
         h.id,
@@ -149,6 +187,38 @@
         </where>
 
     </select>
+
+
+    <resultMap id="HouseVOResultMap" type="com.kmbeast.pojo.vo.HouseVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="landlord_id" property="landlordId"/>
+        <result column="landlord_name" property="landlordName"/>
+        <result column="landlord_avatar" property="landlordAvatar"/>
+        <!--地区信息需要连表地区表查询-->
+        <result column="top_area_id" property="topAreaId"/>
+        <result column="area_id" property="areaId"/>
+        <result column="city_area_name" property="cityAreaName"/>
+        <!--小区信息需要连表小区信息表查询-->
+        <result column="community_id" property="communityId"/>
+        <result column="community_name" property="communityName"/>
+        <result column="detail" property="detail"/>
+        <result column="cover" property="cover"/>
+        <result column="covers" property="covers"/>
+        <result column="status" property="status"/>
+        <result column="type_id" property="typeId"/>
+        <result column="floor" property="floor"/>
+        <result column="sized_id" property="sizedId"/>
+        <result column="size_number" property="sizeNumber"/>
+        <result column="direction_id" property="directionId"/>
+        <result column="fitment_status_id" property="fitmentStatusId"/>
+        <result column="rent" property="rent"/>
+        <result column="is_subway" property="isSubway"/>
+        <result column="subway_line" property="subwayLine"/>
+        <result column="rental_type" property="rentalType"/>
+        <result column="living_facilities" property="livingFacilities"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
 
     <resultMap id="HouseListItemResultMap" type="com.kmbeast.pojo.vo.HouseListItemVO">
         <id column="id" property="id"/>

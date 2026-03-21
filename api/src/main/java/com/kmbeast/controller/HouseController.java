@@ -6,6 +6,7 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.HouseVO;
 import com.kmbeast.pojo.vo.LivingFacilityVO;
 import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseService;
@@ -163,6 +164,18 @@ public class HouseController {
     @ResponseBody
     public Result<String> houseStatusDeal(@PathVariable Integer id) {
         return houseService.houseStatusDeal(id);
+    }
+
+    /**
+     * 通过ID查询房屋详情信息
+     *
+     * @param id 房源ID
+     * @return Result<HouseVO> 响应结果
+     */
+    @GetMapping(value = "/getById/{id}")
+    @ResponseBody
+    public Result<HouseVO> selectById(@PathVariable Integer id) {
+        return houseService.selectById(id);
     }
 
     /**

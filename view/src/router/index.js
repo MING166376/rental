@@ -32,6 +32,10 @@ const routes = [
         component: () => import(`@/views/service/PostHouse.vue`),
       },
       {
+        path:'update-house',
+        component:() => import(`@/views/service/UpdateHouse.vue`),
+      },
+      {
         path: 'house-list',
         component: () => import(`@/views/service/HouseList.vue`),
       },

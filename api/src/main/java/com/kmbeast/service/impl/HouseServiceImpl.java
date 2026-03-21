@@ -10,16 +10,14 @@ import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.dto.LandlordQueryDto;
 import com.kmbeast.pojo.em.*;
 import com.kmbeast.pojo.entity.House;
-import com.kmbeast.pojo.vo.HouseListItemVO;
-import com.kmbeast.pojo.vo.LandlordVO;
-import com.kmbeast.pojo.vo.LivingFacilityVO;
-import com.kmbeast.pojo.vo.SelectedVO;
+import com.kmbeast.pojo.vo.*;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -64,6 +62,41 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
             if (Objects.nonNull(houseListItemVO.getFitmentStatusId())) {
                 String detail = HouseFitmentEnum.getDetail(houseListItemVO.getFitmentStatusId());
                 houseListItemVO.setFitmentStatusName(detail);
+            }
+        }
+    }
+
+    private void dealHouseVOStatus(List<HouseVO> houseVOS) {
+        for (HouseVO houseVO : houseVOS) {
+            // 通过朝向ID，设置朝向文本字样
+            if (Objects.nonNull(houseVO.getDirectionId())) {
+                String detail = HouseDirectionEnum.getDetail(houseVO.getDirectionId());
+                houseVO.setDirectionName(detail);
+            }
+            // 通过押金方式ID，设置押金方式文本字样
+            if (Objects.nonNull(houseVO.getDepositMethodId())) {
+                String detail = HouseDepositEnum.getDetail(houseVO.getDepositMethodId());
+                houseVO.setDepositMethodName(detail);
+            }
+            // 通过装修状态ID，设置装修状态文本字样
+            if (Objects.nonNull(houseVO.getFitmentStatusId())) {
+                String detail = HouseFitmentEnum.getDetail(houseVO.getFitmentStatusId());
+                houseVO.setFitmentStatusName(detail);
+            }
+            // 通过房屋类型ID，设置房屋类型文本字样
+            if (Objects.nonNull(houseVO.getTypeId())) {
+                String detail = HouseTypeEnum.getDetail(houseVO.getTypeId());
+                houseVO.setTypeName(detail);
+            }
+            // 通过户型类型ID，设置户型文本字样
+            if (Objects.nonNull(houseVO.getSizedId())) {
+                String detail = HouseSizedEnum.getDetail(houseVO.getTypeId());
+                houseVO.setSizedName(detail);
+            }
+            // 设置租赁方式
+            if (Objects.nonNull(houseVO.getRentalType())) {
+                String detail = RentalTypeEnum.getDetail(houseVO.getRentalType());
+                houseVO.setRentalTypeName(detail);
             }
         }
     }
@@ -290,5 +323,20 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
                 : HouseStatusEnum.STATUS_1.getType());
         updateById(house);
         return ApiResult.success(equals ? "房屋已下架" : "房屋已上架");
+    }
+
+    /**
+     * 通过ID查询房屋详情信息
+     *
+     * @param id 房源ID
+     * @return Result<HouseVO> 响应结果
+     */
+    @Override
+    public Result<HouseVO> selectById(Integer id) {
+        HouseVO houseVO = this.baseMapper.getById(id);
+        List<HouseVO> houseVOList = new ArrayList<>();
+        houseVOList.add(houseVO);
+        dealHouseVOStatus(houseVOList);
+        return ApiResult.success(houseVO);
     }
 }
