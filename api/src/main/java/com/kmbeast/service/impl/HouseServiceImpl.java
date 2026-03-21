@@ -312,15 +312,21 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         House house = getById(id);
         AssertUtils.notNull(house, "房源信息异常");
         AssertUtils.notNull(house.getLandlordId(), "房源信息异常");
+        boolean equals = Objects.equals(house.getStatus(), HouseStatusEnum.STATUS_1.getType());
+        house.setStatus(equals
+                ? HouseStatusEnum.STATUS_2.getType()
+                : HouseStatusEnum.STATUS_1.getType());
+        // 如果是管理员审核，不需要进行房东的校验
+        if (Objects.equals(LocalThreadHolder.getRoleId(), RoleEnum.ADMIN.getRole())) {
+            updateById(house);
+            return ApiResult.success(equals ? "房屋已下架" : "房屋已上架");
+        }
+        // 如果是房东自己，执行下列的校验
         Integer landlordId = house.getLandlordId(); // 取得房东ID
         LandlordVO landlord = getLandlord(); // 当前操作者认证的房东信息
         AssertUtils.notNull(landlord, "房东信息异常");
         AssertUtils.isTrue(landlord.getIsAudit(), "房东信息未审核");
         AssertUtils.equals(landlordId, landlord.getId(), "非法操作");
-        boolean equals = Objects.equals(house.getStatus(), HouseStatusEnum.STATUS_1.getType());
-        house.setStatus(equals
-                ? HouseStatusEnum.STATUS_2.getType()
-                : HouseStatusEnum.STATUS_1.getType());
         updateById(house);
         return ApiResult.success(equals ? "房屋已下架" : "房屋已上架");
     }

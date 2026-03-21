@@ -1,9 +1,5 @@
 <template>
   <div class="container">
-    <div class="nav-text">
-      我发布的房源
-    </div>
-
     <div class="top-healder">
       <div class="nav-left">
         <Tab :buttons="[
@@ -14,12 +10,6 @@
       </div>
 
       <div class="nav-right">
-        <div class="primary-bt" @click="addHouse">
-          <i class="el-icon-plus"></i>
-
-          新增房源
-        </div>
-
         <div>
           <AutoInput placeholder="房源名" @listener="listener" />
         </div>
@@ -81,8 +71,6 @@
                 <div @click="houseStatusDeal(item.id)"><i
                     :class="item.status === 1 ? 'el-icon-bottom' : 'el-icon-top'"></i>{{ item.status
                 === 1 ? '房源下架' : '房源上架' }}</div>
-
-                <div @click="updateHouseInfo(item.id)"><i class="el-icon-edit"></i>编辑</div>
 
                 <div @click="deletedHouse(item)"><i class="el-icon-delete"></i>删除</div>
 
@@ -170,9 +158,6 @@ export default {
         console.error('房源删除异常:', error);
       }
     },
-    updateHouseInfo(id) {
-      this.$router.push(`/service-center/update-house?houseId=${id}`);
-    },
     async houseStatusDeal(id) {
       try {
         const { message } = await this.$axios.put(`/house/houseStatusDeal/${id}`);
@@ -182,9 +167,6 @@ export default {
         this.$message.error(error.message);
         console.error('房源状态信息设置异常:', error);
       }
-    },
-    addHouse() {
-      this.$router.push('/service-center/post-house');
     },
     handleChange(val) {
       this.houseQueryDto.status = Number(val.value);
@@ -220,7 +202,7 @@ export default {
     // 查询房源信息数据
     async fetchFreshData() {
       try {
-        const { data, total } = await this.$axios.post('/house/landlordHouseList', this.houseQueryDto);
+        const { data, total } = await this.$axios.post('/house/list', this.houseQueryDto);
         this.apiResult.data = data;
         this.apiResult.total = total;
       } catch (error) {

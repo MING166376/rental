@@ -103,6 +103,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/house-manage",
+        name: '房源管理',
+        show: true,
+        icon: 'el-icon-s-shop',
+        component: () => import(`@/views/admin/HouseManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/community-update",
         name: '修改小区信息',
         show: false,
