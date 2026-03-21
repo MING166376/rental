@@ -1,4 +1,3 @@
-
 package com.kmbeast.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,7 +48,7 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         return ApiResult.success(houseListItemVOS, count);
     }
 
-    private void dealHouseStatus(List<HouseListItemVO> houseListItemVOS){
+    private void dealHouseStatus(List<HouseListItemVO> houseListItemVOS) {
         for (HouseListItemVO houseListItemVO : houseListItemVOS) {
             // 通过朝向ID，设置朝向文本字样
             if (Objects.nonNull(houseListItemVO.getDirectionId())) {
@@ -124,7 +123,7 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
     public Result<String> saveEntity(House house) {
         paramJudge(house);
         // 设置上当前新增的房东ID
-        LandlordVO landlordVO = getLandlordId();
+        LandlordVO landlordVO = getLandlord();
         AssertUtils.isTrue(landlordVO.getIsAudit(), "房东认证信息待审核中，请稍后再试");
         house.setLandlordId(landlordVO.getId()); // 认证通过，设置上查出来的房东ID
         house.setCreateTime(LocalDateTime.now()); // 设置上当前的操作时间
@@ -135,9 +134,10 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
 
     /**
      * 取得房东ID
+     *
      * @return Integer
      */
-    private LandlordVO getLandlordId() {
+    private LandlordVO getLandlord() {
         LandlordQueryDto landlordQueryDto = new LandlordQueryDto();
         landlordQueryDto.setUserId(LocalThreadHolder.getUserId()); // 设置上当前新增房屋信息的房东信息ID
         List<LandlordVO> landlordVOS = landlordMapper.list(landlordQueryDto);
@@ -258,11 +258,37 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
     @Override
     public Result<List<HouseListItemVO>> landlordHouseList(HouseQueryDto houseQueryDto) {
         // 通过当前用户ID查询房东ID
-        LandlordVO landlordVO = getLandlordId();
+        LandlordVO landlordVO = getLandlord();
         houseQueryDto.setLandlordId(landlordVO.getId());
         List<HouseListItemVO> houseListItemVOS = this.baseMapper.list(houseQueryDto);
         dealHouseStatus(houseListItemVOS);
         Integer count = this.baseMapper.listCount(houseQueryDto);
         return ApiResult.success(houseListItemVOS, count);
+    }
+
+    /**
+     * 房东上架或下架房源操作
+     *
+     * @param id 房源ID
+     * @return Result<String> 响应结果
+     */
+    @Override
+    public Result<String> houseStatusDeal(Integer id) {
+        AssertUtils.notNull(id, "房源ID不能为空");
+        // 先通过ID查询房源信息
+        House house = getById(id);
+        AssertUtils.notNull(house, "房源信息异常");
+        AssertUtils.notNull(house.getLandlordId(), "房源信息异常");
+        Integer landlordId = house.getLandlordId(); // 取得房东ID
+        LandlordVO landlord = getLandlord(); // 当前操作者认证的房东信息
+        AssertUtils.notNull(landlord, "房东信息异常");
+        AssertUtils.isTrue(landlord.getIsAudit(), "房东信息未审核");
+        AssertUtils.equals(landlordId, landlord.getId(), "非法操作");
+        boolean equals = Objects.equals(house.getStatus(), HouseStatusEnum.STATUS_1.getType());
+        house.setStatus(equals
+                ? HouseStatusEnum.STATUS_2.getType()
+                : HouseStatusEnum.STATUS_1.getType());
+        updateById(house);
+        return ApiResult.success(equals ? "房屋已下架" : "房屋已上架");
     }
 }

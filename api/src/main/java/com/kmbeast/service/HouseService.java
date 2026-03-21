@@ -39,4 +39,6 @@ public interface HouseService extends IService<House> {
 
     Result<List<HouseListItemVO>> landlordHouseList(HouseQueryDto houseQueryDto);
 
+    Result<String> houseStatusDeal(Integer id);
+
 }

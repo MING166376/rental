@@ -154,6 +154,18 @@ public class HouseController {
     }
 
     /**
+     * 房东上架或下架房源操作
+     *
+     * @param id 房源ID
+     * @return Result<String> 响应结果
+     */
+    @PutMapping(value = "/houseStatusDeal/{id}")
+    @ResponseBody
+    public Result<String> houseStatusDeal(@PathVariable Integer id) {
+        return houseService.houseStatusDeal(id);
+    }
+
+    /**
      * 查询房屋信息
      *
      * @param houseQueryDto 查询参数

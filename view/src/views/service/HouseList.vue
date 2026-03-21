@@ -1,17 +1,27 @@
 <template>
   <div class="container">
+    <div class="nav-text">
+      我发布的房源
+    </div>
+
     <div class="top-healder">
       <div class="nav-left">
         <Tab :buttons="[
                     { label: '全部', value: 'null' },
-                    { label: '未审核', value: '0' },
-                    { label: '已审核', value: '1' }
+                    { label: '待租', value: '1' },
+                    { label: '下架', value: '2' }
                 ]" initialActive="null" @change="handleChange" />
       </div>
 
       <div class="nav-right">
+        <div class="primary-bt" @click="addHouse">
+          <i class="el-icon-plus"></i>
+
+          新增房源
+        </div>
+
         <div>
-          <AutoInput placeholder="搜索身份证号" @listener="listener" />
+          <AutoInput placeholder="房源名" @listener="listener" />
         </div>
 
       </div>
@@ -29,6 +39,14 @@
           <div>
             <div class="name">
               {{ item.name }}
+              <span class="status1" v-if="item.status === 1">待租</span>
+
+              <span class="status2" v-else-if="item.status === 2">下架</span>
+
+            </div>
+
+            <div class="time">
+              {{ item.createTime }}
             </div>
 
             <div class="point">
@@ -60,7 +78,11 @@
 
               <!-- 功能操作区 -->
               <div class="right">
-                <div><i class="el-icon-edit"></i>编辑</div>
+                <div @click="houseStatusDeal(item.id)"><i
+                    :class="item.status === 1 ? 'el-icon-bottom' : 'el-icon-top'"></i>{{ item.status
+                === 1 ? '房源下架' : '房源上架' }}</div>
+
+                <div @click="updateHouseInfo(item.id)"><i class="el-icon-edit"></i>编辑</div>
 
                 <div><i class="el-icon-delete"></i>删除</div>
 
@@ -178,8 +200,24 @@ export default {
     this.fetchFreshData();
   },
   methods: {
+    updateHouseInfo(id) {
+      this.$router.push(`/service-center/update-house?houseId=${id}`);
+    },
+    async houseStatusDeal(id) {
+      try {
+        const { message } = await this.$axios.put(`/house/houseStatusDeal/${id}`);
+        this.$message.success(message);
+        this.fetchFreshData(); // 重新加载房源数据
+      } catch (error) {
+        this.$message.error(error.message);
+        console.error('房源状态信息设置异常:', error);
+      }
+    },
+    addHouse() {
+      this.$router.push('/service-center/post-house');
+    },
     handleChange(val) {
-      this.houseQueryDto.isAudit = Number(val.value);
+      this.houseQueryDto.status = Number(val.value);
       this.fetchFreshData();
     },
     handleClose() {
@@ -191,7 +229,7 @@ export default {
     },
     // 输入框组件输入回传
     listener(text) {
-      this.houseQueryDto.idcard = text; // 赋值查询条件的内容
+      this.houseQueryDto.name = text; // 赋值查询条件的内容
       this.fetchFreshData(); // 重新加载数据
     },
     async auditLandlord() {
@@ -259,24 +297,57 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.nav-text {
+
+  font-size: 18px;
+  color: #505050;
+  font-weight: 800;
+  padding: 10px;
+
+}
+
 .house-item {
 
   display: flex;
   gap: 20px;
-  padding-block: 30px;
+  padding: 30px 10px;
+
   border-bottom: 1px solid rgb(240, 240, 240);
 
   img {
     width: 130px;
     height: 90px;
+    border-radius: 5px;
+  }
+
+  .time {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #505050;
   }
 
   .name {
     font-size: 20px;
+
+    .status1 {
+      background-color: rgb(235, 191, 78);
+      padding: 2px 6px;
+      color: rgb(255, 255, 255);
+      font-size: 10px;
+    }
+
+    .status2 {
+      background-color: rgb(239, 116, 64);
+      padding: 2px 6px;
+      color: rgb(255, 255, 255);
+      font-size: 10px;
+    }
+
   }
 
   .point {
     display: flex;
+    gap: 100px;
     margin-block: 10px;
     min-width: 600px;
     justify-content: space-between;
@@ -305,6 +376,7 @@ export default {
       justify-content: left;
       align-items: center;
       gap: 20px;
+      min-width: 500px;
 
       div {
         background-color: rgb(245, 245, 245);
@@ -318,7 +390,7 @@ export default {
   }
 
   .rent {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
     color: rgb(236, 108, 97);
   }
