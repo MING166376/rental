@@ -13,7 +13,7 @@
 
       <div class="header-content">
         <div class="main-nav">
-          <Logo class="logo" :logoSize="Number(46)" :fontSize="Number(20)" textColor="rgb(51,51,51)"
+          <Logo class="logo" :logoSize="Number(26)" :fontSize="Number(20)" textColor="rgb(51,51,51)"
                 sysName="房屋租赁系统" />
         </div>
 
@@ -309,7 +309,7 @@ export default {
         const { data } = await this.$axios.post('/landlord/listUser', {});
         this.landlord = data;
       } catch (error) {
-        console.log("查询中介经理申请信息异常：", error);
+        console.log("查询房东申请信息异常：", error);
       }
     },
     changeAddress() {
@@ -515,9 +515,9 @@ export default {
 
 <style scoped lang="scss">
 .position {
-  padding: 20px 60px;
-  background-color: rgb(51, 51, 51);
-  color: rgb(255, 255, 255);
+  padding: 10px 60px;
+  background-color: rgb(64, 158, 255);
+  color: rgb(255,255,255);
 
   .change-address {
     font-size: 12px;
@@ -525,7 +525,7 @@ export default {
     cursor: pointer;
 
     &:hover {
-      color: rgb(55, 171, 33);
+      color: rgb(240,240,240);
     }
   }
 }
@@ -547,18 +547,18 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: rgb(255, 255, 255);
-  overflow-x: hidden;
+  background-color: rgb(240,240,240);
+
 }
 
 .app-header {
   background-color: rgb(255, 255, 255);
-  // padding-inline: 100px;
   margin-bottom: 10px;
-  z-index: 100;
+  z-index: 1000;
   position: sticky;
   top: 0;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgb(230,230,230);
 }
 
 .header-content {
@@ -566,8 +566,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
-  padding: 0 40px;
-  height: 74px;
+  padding: 0 50px;
+  height: 55px;
   position: relative;
 }
 
@@ -694,7 +694,7 @@ export default {
   margin-inline: 20px;
   box-sizing: border-box;
   padding: 10px 30px;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(240,240,240);
   border-radius: 5px;
 }
 
