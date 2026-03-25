@@ -15,16 +15,49 @@
     </div>
 
     <div class="content">
-      <!-- 额外拓展信息 -->
-      <div class="right">
-        测试数据
-      </div>
-
       <!-- 房屋列表信息 -->
       <div class="house-container">
 
-        <div>
-          {{ houseList }}
+        <!-- 房屋显示区域 -->
+        <div class="house-list">
+          <div @click="houseItemClick(item.id)" class="house-item" v-for="item in houseList" :key="item.id">
+            <img :src="item.cover" alt="">
+            <div>
+              <div class="name">{{ item.name }}</div>
+
+              <div class="point">
+                <div>
+                  <i class="el-icon-location"></i>
+
+                  {{ item.cityAreaName }}&nbsp;·&nbsp;{{ item.communityName }}
+                </div>
+
+                <div>
+                  {{ item.depositMethodName }}
+                </div>
+
+                <div>
+                  {{ item.sizeNumber }}m²
+                </div>
+
+                <div>
+                  {{ item.directionName }}
+                </div>
+
+                <div>
+                  {{ item.fitmentStatusName }}
+                </div>
+
+              </div>
+
+              <div class="rent">
+                ¥{{ item.rent }}
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
         <!-- 分页区域 -->
@@ -35,6 +68,11 @@
 
         </div>
 
+      </div>
+
+      <!-- 额外拓展信息 -->
+      <div class="right">
+        测试数据
       </div>
 
     </div>
@@ -58,6 +96,10 @@ export default {
     this.fetchHouseData();
   },
   methods: {
+    // 跳转至房屋详情页
+    houseItemClick(id) {
+      window.open(`/house-detail?id=${id}`, '_blank');
+    },
     // 分页 - 处理页面页数切换
     handleSizeChange(size) {
       this.houseQueryDto.size = size; // 当前页面大小重置
@@ -74,7 +116,7 @@ export default {
     },
     async fetchHouseData() {
       try {
-        const { data, total } = await this.$axios.post('/house/list', this.houseQueryDto);
+        const { data, total } = await this.$axios.post('/house/listUser', this.houseQueryDto);
         this.houseList = data;
         this.total = total;
       } catch (error) {
@@ -96,6 +138,52 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.house-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block: 30px;
+
+  .house-item {
+    flex: 1 1 400px;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    .name {
+      font-size: 18px;
+    }
+
+    img {
+      width: 120px;
+      height: 80px;
+      border-radius: 5px;
+    }
+
+    .point {
+      font-size: 12px;
+      margin-block: 10px;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      gap: 10px;
+      box-sizing: border-box;
+
+      div {
+        background-color: rgb(245, 246, 247);
+        padding: 2px 4px;
+      }
+    }
+
+    .rent {
+      font-size: 22px;
+      font-weight: 800;
+      color: rgb(222, 88, 78);
+    }
+  }
+}
+
 .content {
   display: flex;
   justify-content: space-between;

@@ -4,6 +4,7 @@ import com.kmbeast.aop.Pager;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
+import com.kmbeast.pojo.em.HouseStatusEnum;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.HouseListItemVO;
 import com.kmbeast.pojo.vo.HouseVO;
@@ -176,6 +177,20 @@ public class HouseController {
     @ResponseBody
     public Result<HouseVO> selectById(@PathVariable Integer id) {
         return houseService.selectById(id);
+    }
+
+    /**
+     * 用户首页查询房屋信息 - 前提是只能查询上架的房屋信息
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listUser")
+    @ResponseBody
+    public Result<List<HouseListItemVO>> listUser(@RequestBody HouseQueryDto houseQueryDto) {
+        houseQueryDto.setStatus(HouseStatusEnum.STATUS_1.getType()); // 用户首页只能查询待租的房源信息
+        return houseService.list(houseQueryDto);
     }
 
     /**
