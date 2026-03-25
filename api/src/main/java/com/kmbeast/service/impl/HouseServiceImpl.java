@@ -345,4 +345,30 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         dealHouseVOStatus(houseVOList);
         return ApiResult.success(houseVO);
     }
+
+    /**
+     * 查询房屋面积查询条件范围
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseSizeNumber() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseSizeNumberEnum.values())
+                .map(houseSizeNumberEnum -> new SelectedVO(houseSizeNumberEnum.getType(), houseSizeNumberEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 查询房屋租金查询条件范围
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @Override
+    public Result<List<SelectedVO>> houseRentRange() {
+        List<SelectedVO> selectedVOS = Arrays.stream(HouseRentEnum.values())
+                .map(houseRentEnum -> new SelectedVO(houseRentEnum.getType(), houseRentEnum.getDetail()))
+                .collect(Collectors.toList());
+        return ApiResult.success(selectedVOS);
+    }
 }

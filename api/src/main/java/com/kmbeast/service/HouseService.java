@@ -44,4 +44,9 @@ public interface HouseService extends IService<House> {
 
     Result<HouseVO> selectById(Integer id);
 
+    Result<List<SelectedVO>> houseSizeNumber();
+
+    Result<List<SelectedVO>> houseRentRange();
+
+
 }

@@ -143,6 +143,28 @@ public class HouseController {
     }
 
     /**
+     * 查询房屋面积查询条件范围
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseSizeNumber")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseSizeNumber() {
+        return houseService.houseSizeNumber();
+    }
+
+    /**
+     * 查询房屋租金查询条件范围
+     *
+     * @return Result<List < SelectedVO>> 响应结果
+     */
+    @GetMapping(value = "/houseRentRange")
+    @ResponseBody
+    public Result<List<SelectedVO>> houseRentRange() {
+        return houseService.houseRentRange();
+    }
+
+    /**
      * 查询房东自己的房屋信息
      *
      * @param houseQueryDto 查询参数
