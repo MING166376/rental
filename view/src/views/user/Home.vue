@@ -21,23 +21,35 @@
 
         <!-- 额外查询条件区域 -->
         <div>
-          <!-- 搜索小区 -->
-          <div class="name">
-            <el-input clearable style="width: 300px;" placeholder="请输入内容" v-model="houseQueryDto.name">
-              <template slot="append">
-                <div @click="fetchHouseData">
-                  搜索
-                </div>
+          <div style="display: flex;justify-content: space-between;align-items: center;">
+            <!-- 常居住地信息 -->
+            <div class="area">
+              <div>
+                <i class="el-icon-location"></i>
 
-              </template>
+                {{ userArea.topAreaName }} > {{ userArea.cityAreaName }}
+              </div>
 
-            </el-input>
+              <div>
+                <span @click="changeAreaOperation" class="change-area">切换地区</span>
+
+              </div>
+
+            </div>
+
+            <div>
+              <AutoInput placeholder="搜索房源" @listener="listener" />
+            </div>
 
           </div>
 
-          <!-- 常居住地信息 -->
-          <div class="area">
-            {{ userArea.topAreaName }} > {{ userArea.cityAreaName }}
+          <!-- 查询结果提示 -->
+          <div
+              style="font-size: 14px;color: rgb(51,51,51);background-color: rgb(246,246,246);padding: 12px 20px;">
+            共为你查询到
+            <span style="font-size: 20px;font-weight: 600;padding: 6px;">{{ total }}</span>
+
+            套房源
           </div>
 
           <!-- 房屋属性查询条件 -->
@@ -49,7 +61,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseSizeNumberClick(item)" v-for="(item, index) in houseSizeNumberList"
+                <div :style="{
+                                    'color': conditionFilter.sizeNumber === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.sizeNumber === item.label ? '600' : ''
+                                }" @click="houseSizeNumberClick(item)" v-for="(item, index) in houseSizeNumberList"
                      :key="item.value">
                   {{ item.label }}
                   <span v-if="index !== 0">m²</span>
@@ -67,7 +82,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseRentClick(item)" v-for="(item, index) in houseRentRangeList"
+                <div :style="{
+                                    'color': conditionFilter.rent === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.rent === item.label ? '600' : ''
+                                }" @click="houseRentClick(item)" v-for="(item, index) in houseRentRangeList"
                      :key="item.value">
                   {{ item.label }}
                   <span v-if="index !== 0">元</span>
@@ -85,7 +103,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseTypeClick(item)" v-for="item in houseTypeList" :key="item.value">
+                <div :style="{
+                                    'color': conditionFilter.typeId === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.typeId === item.label ? '600' : ''
+                                }" @click="houseTypeClick(item)" v-for="item in houseTypeList" :key="item.value">
                   {{ item.label }}
                 </div>
 
@@ -100,7 +121,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseDirectionClick(item)" v-for="item in houseDirectionList"
+                <div :style="{
+                                    'color': conditionFilter.directionId === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.directionId === item.label ? '600' : ''
+                                }" @click="houseDirectionClick(item)" v-for="item in houseDirectionList"
                      :key="item.value">
                   {{ item.label }}
                 </div>
@@ -116,7 +140,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseSizedClick(item)" v-for="item in houseSizedList" :key="item.value">
+                <div :style="{
+                                    'color': conditionFilter.sizedId === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.sizedId === item.label ? '600' : ''
+                                }" @click="houseSizedClick(item)" v-for="item in houseSizedList" :key="item.value">
                   {{ item.label }}
                 </div>
 
@@ -131,7 +158,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseDepositMethodClick(item)" v-for="item in houseDepositMethodList"
+                <div :style="{
+                                    'color': conditionFilter.depositMethodId === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.depositMethodId === item.label ? '600' : ''
+                                }" @click="houseDepositMethodClick(item)" v-for="item in houseDepositMethodList"
                      :key="item.value">
                   {{ item.label }}
                 </div>
@@ -147,7 +177,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseSubwayClick(item)" v-for="item in houseSubwayList" :key="item.value">
+                <div :style="{
+                                    'color': conditionFilter.isSubway === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.isSubway === item.label ? '600' : ''
+                                }" @click="houseSubwayClick(item)" v-for="item in houseSubwayList" :key="item.value">
                   {{ item.label }}
                 </div>
 
@@ -162,7 +195,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseFitmentStatusClick(item)" v-for="item in houseFitmentStatusList"
+                <div :style="{
+                                    'color': conditionFilter.fitmentStatusId === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.fitmentStatusId === item.label ? '600' : ''
+                                }" @click="houseFitmentStatusClick(item)" v-for="item in houseFitmentStatusList"
                      :key="item.value">
                   {{ item.label }}
                 </div>
@@ -178,7 +214,10 @@
               </div>
 
               <div class="item-condition">
-                <div @click="houseRentalTypeClick(item)" v-for="item in houseRentalTypeList"
+                <div :style="{
+                                    'color': conditionFilter.rentalType === item.label ? 'rgb(31, 176, 129)' : '',
+                                    'fontWeight': conditionFilter.rentalType === item.label ? '600' : ''
+                                }" @click="houseRentalTypeClick(item)" v-for="item in houseRentalTypeList"
                      :key="item.value">
                   {{ item.label }}
                 </div>
@@ -193,6 +232,11 @@
 
         <!-- 房屋显示区域 -->
         <div class="house-list">
+          <div v-if="houseList.length === 0">
+            <el-empty description="暂无房屋信息"></el-empty>
+
+          </div>
+
           <div @click="houseItemClick(item.id)" class="house-item" v-for="item in houseList" :key="item.id">
             <img :src="item.cover" alt="">
             <div>
@@ -250,17 +294,64 @@
 
     </div>
 
+    <!-- 设置地区信息 -->
+    <el-dialog title="设置地区信息" :closeOnClickModal="false" :show-close="false" :visible.sync="dialogArea" width="30%">
+      <div>
+        <p>*所属省份</p>
+
+        <el-select @change="handleAreaChange" style="width: 100%;" v-model="topAreaId" placeholder="请选择">
+          <el-option v-for="item in topArea" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+
+        </el-select>
+
+        <p>*所属市区</p>
+
+        <el-select style="width: 100%;" v-model="cityAreaId" placeholder="请选择">
+          <el-option v-for="item in cityArea" :key="item.id" :label="item.name" :value="item.id">
+          </el-option>
+
+        </el-select>
+
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+                <span class="primary-bt" @click="dialogArea = false">取消</span>
+
+                <span class="info-bt" @click="confirmFetchArea">确定设置</span>
+
+            </span>
+
+    </el-dialog>
+
   </div>
 
 </template>
 
 <script>
+import AutoInput from "@/components/AutoInput.vue"; // 导入封装好的输入框组件
 export default {
+  components: { AutoInput },
   data() {
     return {
+      dialogArea: false, // 省份信息弹窗
+      conditionFilter: { // 选中项
+        sizeNumber: null,
+        rent: null,
+        typeId: null,
+        directionId: null,
+        sizedId: null,
+        depositMethodId: null,
+        isSubway: null,
+        fitmentStatusId: null,
+        rentalType: null,
+      },
       userArea: {}, //用户常居住地信息
       landlord: {}, // 房东认证信息
-      houseQueryDto: {},// 房屋查询条件
+      houseQueryDto: {
+        current: 1, // 默认查第一页
+        size: 10, // 一页查10条
+      },// 房屋查询条件
       houseList: [], // 房屋信息
       total: null, // 总页数
       houseTypeList: [], // 房屋类型查询条件数组
@@ -272,6 +363,10 @@ export default {
       houseRentalTypeList: [],// 房屋租赁方式查询条件数组
       houseSizeNumberList: [], // 房屋面积查询条件数组
       houseRentRangeList: [], // 房屋租金查询条件数组
+      topArea: [], // 查询省份信息
+      cityArea: [], // 市区信息
+      topAreaId: null, // 省份ID
+      cityAreaId: null,
     }
   },
   created() {
@@ -289,35 +384,83 @@ export default {
     this.fetchHouseRent();
   },
   methods: {
+    // 输入框组件输入回传
+    listener(text) {
+      this.houseQueryDto.name = text; // 赋值查询条件的内容
+      this.fetchHouseData(); // 重新加载数据
+    },
+    confirmFetchArea() {
+      // 选中的省份
+      const topAreaList = this.topArea.filter(area => area.id === this.topAreaId);
+      // 选中的市区
+      const cityAreaList = this.cityArea.filter(area => area.id === this.cityAreaId);
+      this.userArea.topAreaName = topAreaList[0].name;
+      this.userArea.cityAreaName = cityAreaList[0].name;
+      this.dialogArea = false;
+      this.houseQueryDto.areaId = cityAreaList[0].id; // 通过选中的城市ID去查指定城市下面的数据
+      this.fetchHouseData();
+    },
+    async fetchTopArea() {
+      try {
+        const areaQueryDto = { parentId: 0 }
+        const { data } = await this.$axios.post('/area/list', areaQueryDto);
+        this.topArea = data;
+      } catch (error) {
+        console.log("查询省份信息异常：", error);
+      }
+    },
+    async handleAreaChange() {
+      try {
+        const areaQueryDto = { parentId: this.topAreaId }
+        const { data } = await this.$axios.post('/area/list', areaQueryDto);
+        this.cityArea = data;
+      } catch (error) {
+        console.log("查询省份下的市区信息异常：", error);
+      }
+    },
+    changeAreaOperation() {
+      this.dialogArea = true;
+      this.fetchTopArea();
+      this.handleAreaChange();
+    },
     houseTypeClick(item) {
+      this.conditionFilter.typeId = item.label;
       this.houseQueryDto.typeId = item.value;
       this.fetchHouseData();
     },
     houseDirectionClick(item) {
+      this.conditionFilter.directionId = item.label;
       this.houseQueryDto.directionId = item.value;
       this.fetchHouseData();
     },
     houseSizedClick(item) {
+      this.conditionFilter.sizedId = item.label;
       this.houseQueryDto.sizedId = item.value;
       this.fetchHouseData();
     },
     houseDepositMethodClick(item) {
+      this.conditionFilter.depositMethodId = item.label;
       this.houseQueryDto.depositMethodId = item.value;
       this.fetchHouseData();
     },
     houseSubwayClick(item) {
-      this.houseQueryDto.isSubway = item.value === 1;
+      this.conditionFilter.isSubway = item.label;
+      this.houseQueryDto.isSubway = item.value === null ? null : item.value === 1;
       this.fetchHouseData();
     },
     houseFitmentStatusClick(item) {
+      this.conditionFilter.fitmentStatusId = item.label;
       this.houseQueryDto.fitmentStatusId = item.value;
       this.fetchHouseData();
     },
     houseRentalTypeClick(item) {
+      this.conditionFilter.rentalType = item.label;
       this.houseQueryDto.rentalType = item.value;
       this.fetchHouseData();
     },
     houseSizeNumberClick(item) {
+      this.conditionFilter.sizeNumber = item.label;
+
       // 如果说不限制
       if (item.value === null) {
         this.houseQueryDto.minSizeNumber = null;
@@ -330,6 +473,7 @@ export default {
       this.fetchHouseData();
     },
     houseRentClick(item) {
+      this.conditionFilter.rent = item.label;
       // 如果说不限制
       if (item.value === null) {
         this.houseQueryDto.minRent = null;
@@ -347,6 +491,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseTypeList');
         this.houseTypeList = data;
         this.houseTypeList.unshift({ value: null, label: '不限' });
+        this.houseTypeClick(this.houseTypeList[0]);
       } catch (error) {
         console.log("查询房屋类型异常：", error);
       }
@@ -357,6 +502,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseDirectionList');
         this.houseDirectionList = data;
         this.houseDirectionList.unshift({ value: null, label: '不限' });
+        this.houseDirectionClick(this.houseDirectionList[0]);
       } catch (error) {
         console.log("查询房屋朝向异常：", error);
       }
@@ -367,6 +513,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSizedList');
         this.houseSizedList = data;
         this.houseSizedList.unshift({ value: null, label: '不限' });
+        this.houseSizedClick(this.houseSizedList[0]);
       } catch (error) {
         console.log("查询房屋户型异常：", error);
       }
@@ -377,6 +524,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseDepositMethodList');
         this.houseDepositMethodList = data;
         this.houseDepositMethodList.unshift({ value: null, label: '不限' });
+        this.houseDepositMethodClick(this.houseDepositMethodList[0]);
       } catch (error) {
         console.log("查询房屋户型异常：", error);
       }
@@ -387,6 +535,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSubwayList');
         this.houseSubwayList = data;
         this.houseSubwayList.unshift({ value: null, label: '不限' });
+        this.houseSubwayClick(this.houseSubwayList[0]);
       } catch (error) {
         console.log("查询房屋是否临近地铁异常：", error);
       }
@@ -397,6 +546,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseFitmentStatusList');
         this.houseFitmentStatusList = data;
         this.houseFitmentStatusList.unshift({ value: null, label: '不限' });
+        this.houseFitmentStatusClick(this.houseFitmentStatusList[0]);
       } catch (error) {
         console.log("查询房屋装修状态异常：", error);
       }
@@ -407,6 +557,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseRentalTypeList');
         this.houseRentalTypeList = data;
         this.houseRentalTypeList.unshift({ value: null, label: '不限' });
+        this.houseRentalTypeClick(this.houseRentalTypeList[0]);
       } catch (error) {
         console.log("查询房屋租赁方式异常：", error);
       }
@@ -417,6 +568,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSizeNumber');
         this.houseSizeNumberList = data;
         this.houseSizeNumberList.unshift({ value: null, label: '不限' });
+        this.houseSizeNumberClick(this.houseSizeNumberList[0]);
       } catch (error) {
         console.log("查询房屋面积查询条件异常：", error);
       }
@@ -427,6 +579,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseRentRange');
         this.houseRentRangeList = data;
         this.houseRentRangeList.unshift({ value: null, label: '不限' });
+        this.houseRentClick(this.houseRentRangeList[0]);
       } catch (error) {
         console.log("查询房屋租金查询条件异常：", error);
       }
@@ -472,7 +625,10 @@ export default {
       try {
         const { data } = await this.$axios.post('/user-area/listUser', {});
         this.userArea = data[0];
-
+        this.houseQueryDto.areaId = this.userArea.cityAreaId;
+        // 默认查询的就是用户常居住地的房源信息
+        this.topAreaId = this.userArea.topAreaId;
+        this.cityAreaId = this.userArea.cityAreaId;
       } catch (error) {
         console.log("查询用户常居住地信息异常：", error);
       }
@@ -482,19 +638,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.area {
+  margin-block: 20px;
+  font-size: 14px;
+  color: rgb(150, 152, 154);
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 10px;
+
+  .change-area {
+    font-size: 12px;
+    color: rgb(64, 158, 255);
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .condition-container {
   border: 1px solid rgb(240, 240, 240);
   padding: 10px 20px;
-  margin-block: 10px;
 }
 
 .condition {
   display: flex;
   justify-content: left;
   align-items: center;
-  margin-block: 10px;
   border-bottom: 1px solid rgb(240, 240, 240);
-  padding-block: 8px;
+  padding-block: 12px;
 
   .point-text {
     min-width: 60px;
@@ -504,7 +678,8 @@ export default {
 
   .item-condition {
     display: flex;
-    font-size: 12px;
+    font-size: 14px;
+
 
     div {
       margin-right: 20px;
