@@ -38,7 +38,8 @@
                         </span>
 
             <el-dropdown-menu slot="dropdown" class="user-dropdown">
-              <el-dropdown-item v-if="landlord !== null" @click.native="serviceCenter" icon="el-icon-menu">
+              <el-dropdown-item v-if="landlord !== null" @click.native="serviceCenter"
+                                icon="el-icon-menu">
                 服务中心
               </el-dropdown-item>
 
@@ -281,6 +282,7 @@ export default {
       dialogOutOperation: false, // 退出登录弹窗控制开关
       navItems: [
         { path: '/home', icon: '', title: '首页' },
+        { path: '/house-news', icon: 'el-icon-tickets', title: '房屋资讯' },
       ],
       userInfo: {},
       isAuthChecked: false,
@@ -517,7 +519,7 @@ export default {
 .position {
   padding: 10px 60px;
   background-color: rgb(64, 158, 255);
-  color: rgb(255,255,255);
+  color: rgb(255, 255, 255);
 
   .change-address {
     font-size: 12px;
@@ -525,7 +527,7 @@ export default {
     cursor: pointer;
 
     &:hover {
-      color: rgb(240,240,240);
+      color: rgb(240, 240, 240);
     }
   }
 }
@@ -547,7 +549,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: rgb(240,240,240);
+  background-color: rgb(240, 240, 240);
 
 }
 
@@ -558,7 +560,7 @@ export default {
   position: sticky;
   top: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgb(230,230,230);
+  box-shadow: 0 4px 8px rgb(230, 230, 230);
 }
 
 .header-content {
@@ -691,7 +693,7 @@ export default {
 .app-main {
   flex: 1;
   box-sizing: border-box;
-  background-color: rgb(240,240,240);
+  background-color: rgb(240, 240, 240);
   border-radius: 5px;
 }
 

@@ -24,6 +24,11 @@ const routes = [
     component: () => import(`@/views/user/HouseDetail.vue`)
   },
   {
+    path: "/house-news-detail",
+    name: 'houseNewsDetail',
+    component: () => import(`@/views/user/HouseNewsDetail.vue`)
+  },
+  {
     path: "/service-center",
     name: 'serviceCenter',
     component: () => import(`@/views/service/Index.vue`),
@@ -167,6 +172,12 @@ const routes = [
         path: "/home",
         name: '首页',
         component: () => import(`@/views/user/Home.vue`),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "/house-news",
+        name: '房屋资讯',
+        component: () => import(`@/views/user/HouseNews.vue`),
         meta: { requireAuth: true },
       },
     ]
