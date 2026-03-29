@@ -15,7 +15,7 @@
         FROM house_news hn
         <where>
             <if test="title != null">
-                AND fi.title LIKE concat('%',#{title},'%')
+                AND hn.title LIKE concat('%',#{title},'%')
             </if>
 
         </where>
@@ -33,7 +33,7 @@
         FROM house_news hn
         <where>
             <if test="title != null">
-                AND fi.title LIKE concat('%',#{title},'%')
+                AND hn.title LIKE concat('%',#{title},'%')
             </if>
 
         </where>

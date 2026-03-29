@@ -35,7 +35,7 @@ public class HouseNewsController {
     /**
      * 修改房屋资讯信息
      */
-    @PostMapping(value = "/update")
+    @PutMapping(value = "/update")
     @ResponseBody
     public Result<String> update(@RequestBody HouseNews houseNews) {
         return houseNewsService.updateEntity(houseNews);
@@ -57,7 +57,7 @@ public class HouseNewsController {
      */
     @GetMapping(value = "/getById/{id}")
     @ResponseBody
-    public Result<HouseNewsListVO> getById(@PathVariable Integer id) {
+    public Result<HouseNews> getById(@PathVariable Integer id) {
         return houseNewsService.selectById(id);
     }
 

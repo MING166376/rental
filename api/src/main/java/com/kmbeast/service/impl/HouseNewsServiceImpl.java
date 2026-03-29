@@ -1,25 +1,18 @@
 package com.kmbeast.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kmbeast.context.LocalThreadHolder;
-import com.kmbeast.mapper.FlowIndexMapper;
 import com.kmbeast.mapper.HouseNewsMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
-import com.kmbeast.pojo.dto.FlowIndexQueryDto;
 import com.kmbeast.pojo.dto.HouseNewsQueryDto;
-import com.kmbeast.pojo.em.FlowIndexEnum;
-import com.kmbeast.pojo.entity.FlowIndex;
 import com.kmbeast.pojo.entity.HouseNews;
 import com.kmbeast.pojo.vo.HouseNewsListVO;
-import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.service.HouseNewsService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 房屋资讯业务逻辑接口实现类
@@ -55,9 +48,17 @@ public class HouseNewsServiceImpl extends ServiceImpl<HouseNewsMapper, HouseNews
         return ApiResult.success();
     }
 
+    /**
+     * 通过ID查询房屋资讯
+     *
+     * @param id 房屋ID
+     * @return Result<HouseNews>
+     */
     @Override
-    public Result<HouseNewsListVO> selectById(Integer id) {
-        return null;
+    public Result<HouseNews> selectById(Integer id) {
+        AssertUtils.notNull(id, "ID不能为空");
+        HouseNews houseNews = getById(id);
+        return ApiResult.success(houseNews);
     }
 
     @Override
@@ -70,6 +71,8 @@ public class HouseNewsServiceImpl extends ServiceImpl<HouseNewsMapper, HouseNews
         AssertUtils.hasText(houseNews.getTitle(), "标题不能为空");
         AssertUtils.hasText(houseNews.getCover(), "封面不能为空");
         AssertUtils.hasText(houseNews.getSummary(), "摘要不能为空");
+        AssertUtils.isTrue(houseNews.getTitle().length() < 30, "标题最多30个字");
+        AssertUtils.isTrue(houseNews.getSummary().length() < 200, "摘要最多200个字");
     }
 
 

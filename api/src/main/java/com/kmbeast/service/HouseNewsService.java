@@ -18,7 +18,9 @@ public interface HouseNewsService extends IService<HouseNews> {
 
     Result<String> saveEntity(HouseNews houseNews);
 
-    Result<HouseNewsListVO> selectById(Integer id);
+   // Result<HouseNewsListVO> selectById(Integer id);
+
+    Result<HouseNews> selectById(Integer id);
 
     Result<String> updateEntity(HouseNews houseNews);
 

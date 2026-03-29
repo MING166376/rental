@@ -116,6 +116,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/house-news-manage",
+        name: '房源资讯管理',
+        show: true,
+        icon: 'el-icon-tickets',
+        component: () => import(`@/views/admin/HouseNewsManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/community-update",
         name: '修改小区信息',
         show: false,
