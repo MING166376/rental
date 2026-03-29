@@ -124,6 +124,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/notice-manage",
+        name: '公告管理',
+        show: true,
+        icon: 'el-icon-c-scale-to-original',
+        component: () => import(`@/views/admin/NoticeManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/community-update",
         name: '修改小区信息',
         show: false,
