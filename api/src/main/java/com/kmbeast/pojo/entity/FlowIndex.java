@@ -27,7 +27,7 @@ public class FlowIndex {
     /**
      * 流量类型（1：浏览；2：收藏；3：停留）
      */
-    private Integer areaId;
+    private Integer type;
     /**
      * 停留时长（毫秒）
      */
