@@ -1,3 +1,4 @@
+
 package com.kmbeast.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -19,5 +20,7 @@ public interface FlowIndexService extends IService<FlowIndex> {
     Result<String> viewOperation(FlowIndex flowIndex);
 
     Result<String> saveOperation(FlowIndex flowIndex);
+
+    Result<String> stayOperation(FlowIndex flowIndex);
 
 }

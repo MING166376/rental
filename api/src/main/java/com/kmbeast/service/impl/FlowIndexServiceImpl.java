@@ -137,4 +137,24 @@ public class FlowIndexServiceImpl extends ServiceImpl<FlowIndexMapper, FlowIndex
         save(entity);
         return ApiResult.success("收藏成功");
     }
+
+    /**
+     * 停留时长
+     *
+     * @param flowIndex 实体
+     * @return Result<String>
+     */
+    @Override
+    public Result<String> stayOperation(FlowIndex flowIndex) {
+        judge(flowIndex);
+        AssertUtils.notNull(flowIndex.getTimes(), "时长不为空");
+        FlowIndex entity = createEntity(
+                FlowIndexEnum.REMAIN.getType(),
+                flowIndex.getContentId(),
+                flowIndex.getContentType()
+        );
+        entity.setTimes(flowIndex.getTimes());
+        save(entity);
+        return ApiResult.success();
+    }
 }

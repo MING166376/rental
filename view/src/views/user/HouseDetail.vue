@@ -185,6 +185,8 @@ export default {
   components: { Evaluations },
   data() {
     return {
+      startTime: 0,
+      hasRecorded: false, // 防止重复记录
       indexCover: null,
       houseId: null,
       house: {},
@@ -200,7 +202,35 @@ export default {
     this.getPathId();
     this.fetchUserInfo();
   },
+  mounted() {
+    this.startTime = performance.now(); // 更精确的高精度时间
+    window.addEventListener('beforeunload', this.handlePageLeave);
+  },
+  beforeDestroy() {
+    window.removeEventListener('beforeunload', this.handlePageLeave);
+  },
   methods: {
+    handlePageLeave() {
+      if (this.hasRecorded) return;
+
+      const endTime = performance.now();
+      const stayTime = Math.floor(endTime - this.startTime);
+
+      this.hasRecorded = true;
+
+      this.sendStayTime(stayTime);
+    },
+    async sendStayTime(duration) {
+      try {
+        await this.$axios.post('/flow-index/stayOperation', {
+          contentId: this.houseId,
+          times: duration,
+          contentType: 'HOUSE_INFO'
+        });
+      } catch (e) {
+        console.error('记录停留时间失败:', e);
+      }
+    },
     getPathId() {
       this.houseId = this.$route.query.id;
       this.fetchHouseInfo(this.houseId);

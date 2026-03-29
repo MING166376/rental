@@ -40,6 +40,15 @@ public class FlowIndexController {
     }
 
     /**
+     * 停留操作
+     */
+    @PostMapping(value = "/stayOperation")
+    @ResponseBody
+    public Result<String> stayOperation(@RequestBody FlowIndex flowIndex) {
+        return flowIndexService.stayOperation(flowIndex);
+    }
+
+    /**
      * 收藏操作
      */
     @PostMapping(value = "/saveOperation")
