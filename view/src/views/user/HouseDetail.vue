@@ -95,7 +95,7 @@
           <div class="detail-item">
             <span class="label">地铁</span>
 
-            <span class="value">{{ house.isSubway ? `步行${house.subwayLine}分钟` : '不临近' }}</span>
+            <span class="value">{{ house.isSubway ? `${house.subwayLine}号线` : '不临近' }}</span>
 
           </div>
 
@@ -161,7 +161,7 @@
         <div class="action-buttons">
           <el-button type="primary" @click="contactLandlord">预约看房</el-button>
 
-          <el-button @click="collectHouse">收藏房源</el-button>
+          <el-button @click="collectHouseOperation">{{ saveList.length > 0 ? '取消收藏' : '收藏' }}</el-button>
 
         </div>
 
@@ -182,7 +182,7 @@
 <script>
 import Evaluations from "@/components/Evaluations"
 export default {
-  components: {Evaluations},
+  components: { Evaluations },
   data() {
     return {
       indexCover: null,
@@ -192,7 +192,8 @@ export default {
       houseLivingFacilityList: {},
       currentImageIndex: 0,
       userId: null,
-      avatar: ''
+      avatar: '',
+      saveList: [], // 用户收藏情况
     }
   },
   created() {
@@ -203,10 +204,38 @@ export default {
     getPathId() {
       this.houseId = this.$route.query.id;
       this.fetchHouseInfo(this.houseId);
+      this.recordViewOperation(this.houseId);
+      this.recordSaveStatus(this.houseId);
+    },
+    // 查询用户对于内容的收藏情况
+    async recordSaveStatus(id) {
+      try {
+        const flowIndexQueryDto = {
+          contentId: id,
+          contentType: 'HOUSE_INFO',
+          type: 2
+        }
+        const { data } = await this.$axios.post(`/flow-index/listUser`, flowIndexQueryDto);
+        this.saveList = data;
+      } catch (error) {
+        console.info(error);
+      }
+    },
+    // 浏览操作
+    async recordViewOperation(id) {
+      try {
+        const flowIndex = {
+          contentId: id,
+          contentType: 'HOUSE_INFO'
+        }
+        await this.$axios.post(`/flow-index/viewOperation`, flowIndex);
+      } catch (error) {
+        console.info(error);
+      }
     },
     async fetchUserInfo() {
       try {
-        const {data} = await this.$axios.get(`/user/auth`);
+        const { data } = await this.$axios.get(`/user/auth`);
         this.userId = data.id;
         this.avatar = data.avatar;
       } catch (error) {
@@ -216,8 +245,8 @@ export default {
     },
     async fetchHouseInfo(id) {
       try {
-        const {data} = await this.$axios.get(`/house/getById/${id}`);
-        this.house = {...data};
+        const { data } = await this.$axios.get(`/house/getById/${id}`);
+        this.house = { ...data };
         this.coverList = (data.covers || '')
             .split(',')
             .filter(url => url.trim())
@@ -253,8 +282,25 @@ export default {
     contactLandlord() {
       this.$message.success('已发送联系请求给房东');
     },
-    collectHouse() {
-      this.$message.success('已收藏该房源');
+    // 收藏操作
+    async collectHouseOperation() {
+      try {
+        const flowIndex = {
+          contentId: this.houseId,
+          contentType: 'HOUSE_INFO'
+        }
+        const { message } = await this.$axios.post(`/flow-index/saveOperation`, flowIndex);
+        this.$notify.success({
+          title: '收藏操作',
+          message: message,
+          position: 'buttom-right',
+          duration: 1000,
+        });
+        this.recordSaveStatus(this.houseId);
+      } catch (error) {
+        this.$message.error(error);
+        console.info(error);
+      }
     }
   }
 }

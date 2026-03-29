@@ -1,6 +1,7 @@
 package com.kmbeast.controller;
 
 import com.kmbeast.aop.Pager;
+import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.FlowIndexQueryDto;
@@ -30,6 +31,24 @@ public class FlowIndexController {
     }
 
     /**
+     * 浏览操作
+     */
+    @PostMapping(value = "/viewOperation")
+    @ResponseBody
+    public Result<String> viewOperation(@RequestBody FlowIndex flowIndex) {
+        return flowIndexService.viewOperation(flowIndex);
+    }
+
+    /**
+     * 收藏操作
+     */
+    @PostMapping(value = "/saveOperation")
+    @ResponseBody
+    public Result<String> saveOperation(@RequestBody FlowIndex flowIndex) {
+        return flowIndexService.saveOperation(flowIndex);
+    }
+
+    /**
      * 删除流量指标信息
      */
     @DeleteMapping(value = "/{id}")
@@ -38,6 +57,21 @@ public class FlowIndexController {
         flowIndexService.removeById(id);
         return ApiResult.success("流量指标删除成功");
     }
+
+    /**
+     * 查询用户名下的各类流量指标信息
+     *
+     * @param flowIndexQueryDto 查询参数
+     * @return Result<List < FlowIndex>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listUser")
+    @ResponseBody
+    public Result<List<FlowIndex>> listUser(@RequestBody FlowIndexQueryDto flowIndexQueryDto) {
+        flowIndexQueryDto.setUserId(LocalThreadHolder.getUserId());
+        return flowIndexService.list(flowIndexQueryDto);
+    }
+
 
     /**
      * 查询流量指标信息

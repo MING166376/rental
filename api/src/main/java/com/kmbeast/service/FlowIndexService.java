@@ -16,4 +16,8 @@ public interface FlowIndexService extends IService<FlowIndex> {
 
     Result<String> saveEntity(FlowIndex flowIndex);
 
+    Result<String> viewOperation(FlowIndex flowIndex);
+
+    Result<String> saveOperation(FlowIndex flowIndex);
+
 }

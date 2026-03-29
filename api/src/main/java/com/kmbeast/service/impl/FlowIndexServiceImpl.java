@@ -56,4 +56,85 @@ public class FlowIndexServiceImpl extends ServiceImpl<FlowIndexMapper, FlowIndex
         save(flowIndex);
         return ApiResult.success();
     }
+
+    /**
+     * 浏览操作
+     *
+     * @param flowIndex 实体
+     * @return Result<String>
+     */
+    @Override
+    public Result<String> viewOperation(FlowIndex flowIndex) {
+        judge(flowIndex);
+        FlowIndexQueryDto flowIndexQueryDto = createQueryDto(
+                FlowIndexEnum.VIEW.getType(),
+                flowIndex.getContentId(),
+                flowIndex.getContentType()
+        );
+        // 先判断用户是不是已经浏览了这篇信息
+        Integer count = this.baseMapper.listCount(flowIndexQueryDto);
+        // 如果已经浏览，直接抛出异常即可，不必再次新增浏览行为记录
+        AssertUtils.isFalse(count != 0, "已产生浏览行为");
+        FlowIndex entity = createEntity(
+                FlowIndexEnum.VIEW.getType(),
+                flowIndex.getContentId(),
+                flowIndex.getContentType()
+        );
+        save(entity);
+        return ApiResult.success();
+    }
+
+    private FlowIndex createEntity(Integer type, Integer contentId, String contentType) {
+        FlowIndex flowIndex = new FlowIndex();
+        flowIndex.setType(type); // 声明这种行为操作是浏览操作
+        flowIndex.setContentType(contentType);
+        flowIndex.setContentId(contentId);
+        flowIndex.setUserId(LocalThreadHolder.getUserId()); // 设置上用户ID
+        flowIndex.setCreateTime(LocalDateTime.now()); // 设置上当前时间
+        return flowIndex;
+    }
+
+    private void judge(FlowIndex flowIndex) {
+        AssertUtils.notNull(flowIndex, "实体数据不能为空");
+        AssertUtils.hasText(flowIndex.getContentType(), "请指定内容模块");
+        AssertUtils.notNull(flowIndex.getContentId(), "请指定内容ID");
+    }
+
+    private FlowIndexQueryDto createQueryDto(Integer type, Integer contentId, String contentType) {
+        FlowIndexQueryDto flowIndexQueryDto = new FlowIndexQueryDto();
+        flowIndexQueryDto.setUserId(LocalThreadHolder.getUserId());
+        flowIndexQueryDto.setType(type);
+        flowIndexQueryDto.setContentId(contentId);
+        flowIndexQueryDto.setContentType(contentType);
+        return flowIndexQueryDto;
+    }
+
+    /**
+     * 收藏操作
+     *
+     * @param flowIndex 实体
+     * @return Result<String>
+     */
+    @Override
+    public Result<String> saveOperation(FlowIndex flowIndex) {
+        judge(flowIndex);
+        FlowIndexQueryDto flowIndexQueryDto = createQueryDto(
+                FlowIndexEnum.COLLECTION.getType(),
+                flowIndex.getContentId(),
+                flowIndex.getContentType());
+        // 先判断用户是不是已经收藏了这篇信息
+        List<FlowIndex> flowIndexList = this.baseMapper.list(flowIndexQueryDto);
+        if (!flowIndexList.isEmpty()) { // 用户已经收藏这篇信息的情况
+            // 取消收藏 - 删除用户关于这一条收藏记录的信息
+            removeById(flowIndexList.get(0).getId());
+            return ApiResult.success("取消收藏成功");
+        }
+        FlowIndex entity = createEntity(
+                FlowIndexEnum.COLLECTION.getType(),
+                flowIndex.getContentId(),
+                flowIndex.getContentType()
+        );
+        save(entity);
+        return ApiResult.success("收藏成功");
+    }
 }
