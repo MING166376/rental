@@ -98,7 +98,7 @@ const routes = [
       },
       {
         path: "/landlord-manage",
-        name: '房东管理',
+        name: '中介经理管理',
         show: true,
         icon: 'el-icon-user-solid',
         component: () => import(`@/views/admin/LandlordManage.vue`),

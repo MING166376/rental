@@ -1,6 +1,6 @@
 <template>
   <div class="container-home">
-    <!-- 房东认证 -->
+    <!-- 中介经理认证 -->
     <div class="reply" v-if="landlord === null">
       <div class="title">
         空置房别闲置，你的房源值得更多租客看见
@@ -8,7 +8,7 @@
 
       <div class="content">
         告别传统贴条招租，平台千万级流量曝光，精准匹配优质租客，让空房快速 “活” 起来，租金收益不空置。
-        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为房东</span>
+        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为中介经理</span>
 
       </div>
 
@@ -347,7 +347,7 @@ export default {
         rentalType: null,
       },
       userArea: {}, //用户常居住地信息
-      landlord: {}, // 房东认证信息
+      landlord: {}, // 中介经理认证信息
       houseQueryDto: {
         current: 1, // 默认查第一页
         size: 10, // 一页查10条
@@ -618,7 +618,7 @@ export default {
         console.log(this.landlord);
 
       } catch (error) {
-        console.log("查询房东申请信息异常：", error);
+        console.log("查询中介经理申请信息异常：", error);
       }
     },
     async fetchUserAreaData() {
