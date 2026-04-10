@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 房屋查询条件类
@@ -76,4 +77,8 @@ public class HouseQueryDto extends QueryDto {
      * 租赁类型（1：整租；2：合租）
      */
     private Integer rentalType;
+    /**
+     * 房屋ID列表
+     */
+    private List<Integer> ids;
 }

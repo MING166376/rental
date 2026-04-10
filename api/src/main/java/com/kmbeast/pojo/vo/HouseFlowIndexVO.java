@@ -1,8 +1,11 @@
 package com.kmbeast.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * 房屋流量列表VO
@@ -43,4 +46,9 @@ public class HouseFlowIndexVO {
      * 评论量
      */
     private Integer evaluationsNumber;
+    /**
+     * 创建时间
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 }

@@ -121,6 +121,100 @@
 
     </select>
 
+    <select id="flowIndexList" resultType="com.kmbeast.pojo.vo.HouseFlowIndexVO">
+        /*
+        1. 展现量
+        2. 阅读量
+        3. 收藏量
+        4. 评论量
+        */
+        SELECT
+        h.id ,
+        h.name AS houseName,
+        h.cover AS houseCover,
+        h.create_time AS createTime,
+        (SELECT COUNT(*) FROM flow_index fi1 WHERE fi1.content_type = 'HOUSE_INFO' AND fi1.content_id = h.id AND
+        fi1.type = 4) AS showNumber,
+        (SELECT COUNT(*) FROM flow_index fi2 WHERE fi2.content_type = 'HOUSE_INFO' AND fi2.content_id = h.id AND
+        fi2.type = 1) AS viewNumber,
+        (SELECT COUNT(*) FROM flow_index fi3 WHERE fi3.content_type = 'HOUSE_INFO' AND fi3.content_id = h.id AND
+        fi3.type = 2) AS saveNumber,
+        (SELECT COUNT(*) FROM evaluations e WHERE e.content_type = 'HOUSE_INFO' AND e.content_id = h.id) AS
+        evaluationsNumber
+        FROM house h
+        <where>
+            <if test="name != null and name != ''">
+                AND h.name LIKE concat('%',#{name},'%')
+            </if>
+
+            <if test="landlordId != null">
+                AND h.landlord_id = #{landlordId}
+            </if>
+
+            <if test="areaId != null">
+                AND h.area_id = #{areaId}
+            </if>
+
+            <if test="communityId != null">
+                AND h.community_id = #{communityId}
+            </if>
+
+            <if test="typeId != null">
+                AND h.type_id = #{typeId}
+            </if>
+
+            <if test="minSizeNumber != null and maxSizeNumber != null">
+                AND h.size_number BETWEEN #{minSizeNumber} AND #{maxSizeNumber}
+            </if>
+
+            <if test="directionId != null">
+                AND h.direction_id = #{directionId}
+            </if>
+
+            <if test="sizedId != null">
+                AND h.sized_id = #{sizedId}
+            </if>
+
+            <if test="minRent != null and maxRent != null">
+                AND h.rent BETWEEN #{minRent} AND #{maxRent}
+            </if>
+
+            <if test="depositMethodId != null">
+                AND h.deposit_method_id = #{depositMethodId}
+            </if>
+
+            <if test="status != null">
+                AND h.status = #{status}
+            </if>
+
+            <if test="isSubway != null">
+                AND h.is_subway = #{isSubway}
+            </if>
+
+            <if test="fitmentStatusId != null">
+                AND h.fitment_status_id = #{fitmentStatusId}
+            </if>
+
+            <if test="rentalType != null">
+                AND h.rental_type = #{rentalType}
+            </if>
+
+            <if test="ids != null and ids.size > 0 ">
+                AND h.id IN
+                <foreach collection="ids" item="id" separator="," open="(" close=")" index="index">
+                    #{id}
+                </foreach>
+
+            </if>
+
+        </where>
+
+        <if test="current != null and size != null">
+            LIMIT #{current},#{size}
+        </if>
+
+    </select>
+
     <!--满足分页条件的数据总项-->
     <select id="listCount" resultType="integer">
 
@@ -181,6 +275,14 @@
 
             <if test="rentalType != null">
                 AND h.rental_type = #{rentalType}
+            </if>
+
+            <if test="ids != null and ids.size > 0 ">
+                AND h.id IN
+                <foreach collection="ids" item="id" separator="," open="(" close=")" index="index">
+                    #{id}
+                </foreach>
+
             </if>
 
         </where>

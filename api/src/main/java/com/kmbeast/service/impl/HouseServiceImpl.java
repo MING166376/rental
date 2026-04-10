@@ -2,7 +2,6 @@ package com.kmbeast.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
-import com.kmbeast.mapper.FlowIndexMapper;
 import com.kmbeast.mapper.HouseMapper;
 import com.kmbeast.mapper.LandlordMapper;
 import com.kmbeast.pojo.api.ApiResult;
@@ -16,7 +15,6 @@ import com.kmbeast.pojo.vo.*;
 import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,8 +35,6 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
     private LandlordMapper landlordMapper;
     @Resource
     private FlowIndexService flowIndexService;
-    @Autowired
-    private FlowIndexMapper flowIndexMapper;
 
     /**
      * 房屋列表查询
@@ -430,6 +426,36 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         if (houseIds.isEmpty()) {
             return ApiResult.success(new ArrayList<>());
         }
-        return null;
+        HouseQueryDto queryDto = new HouseQueryDto();
+        queryDto.setIds(houseIds);
+        List<HouseFlowIndexVO> houseFlowIndexVOS = this.baseMapper.flowIndexList(queryDto);
+        dealClickRate(houseFlowIndexVOS);
+        Integer count = this.baseMapper.listCount(queryDto);
+        return ApiResult.success(houseFlowIndexVOS, count);
     }
+
+    /**
+     * 计算并设置点击率（点击率 = 阅读量 / 展现量 * 100%）
+     *
+     * @param houseFlowIndexVOS 流量数据列表
+     */
+    private void dealClickRate(List<HouseFlowIndexVO> houseFlowIndexVOS) {
+        if (houseFlowIndexVOS == null || houseFlowIndexVOS.isEmpty()) {
+            return;
+        }
+
+        for (HouseFlowIndexVO vo : houseFlowIndexVOS) {
+            // 确保展现量和阅读量都不为null且展现量不为0
+            if (vo.getShowNumber() != null && vo.getViewNumber() != null
+                    && vo.getShowNumber() != 0) {
+                // 计算点击率（百分比形式，保留2位小数）
+                double rate = (double) vo.getViewNumber() / vo.getShowNumber() * 100;
+                vo.setClickRate(Double.parseDouble(String.format("%.2f", rate)));
+            } else {
+                // 如果数据不完整，点击率设为0
+                vo.setClickRate(0.0);
+            }
+        }
+    }
+
 }
