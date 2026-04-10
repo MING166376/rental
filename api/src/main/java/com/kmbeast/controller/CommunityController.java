@@ -51,6 +51,18 @@ public class CommunityController {
     }
 
     /**
+     * 通过ID查询小区详情信息
+     *
+     * @param id 小区ID
+     * @return Result<CommunityVO> 响应结果
+     */
+    @GetMapping(value = "/getById/{id}")
+    @ResponseBody
+    public Result<CommunityVO> getById(@PathVariable Integer id) {
+        return communityService.selectById(id);
+    }
+
+    /**
      * 查询小区信息
      *
      * @param communityQueryDto 查询参数

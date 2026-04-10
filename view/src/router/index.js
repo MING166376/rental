@@ -24,6 +24,11 @@ const routes = [
     component: () => import(`@/views/user/NoticeDetail.vue`)
   },
   {
+    path: "/community-detail",
+    name: 'communityDetail',
+    component: () => import(`@/views/user/CommunityDetail.vue`)
+  },
+  {
     path: "/search-house",
     name: 'searchHouse',
     component: () => import(`@/views/view/SearchPage.vue`)

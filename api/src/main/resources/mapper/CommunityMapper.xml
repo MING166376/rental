@@ -11,6 +11,10 @@
         LEFT JOIN area a2 ON a2.id = c.area_id
         LEFT JOIN area a1 ON a1.id = a2.parent_id
         <where>
+            <if test="id != null">
+                AND c.id = #{id}
+            </if>
+
             <if test="areaId != null">
                 AND c.area_id = #{areaId}
             </if>

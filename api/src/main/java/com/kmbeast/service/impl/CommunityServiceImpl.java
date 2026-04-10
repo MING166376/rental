@@ -72,4 +72,19 @@ public class CommunityServiceImpl extends ServiceImpl<CommunityMapper, Community
         save(community);
         return ApiResult.success("新增成功");
     }
+
+    /**
+     * 通过ID查询小区详情信息
+     *
+     * @param id 小区ID
+     * @return Result<CommunityVO> 响应结果
+     */
+    @Override
+    public Result<CommunityVO> selectById(Integer id) {
+        AssertUtils.notNull(id, "小区ID不能为空");
+        CommunityQueryDto communityQueryDto = new CommunityQueryDto();
+        communityQueryDto.setId(id);
+        List<CommunityVO> communityVOS = this.baseMapper.list(communityQueryDto);
+        return ApiResult.success(communityVOS.isEmpty() ? new CommunityVO() : communityVOS.get(0));
+    }
 }

@@ -19,4 +19,6 @@ public interface CommunityService extends IService<Community> {
 
     Result<String> saveEntity(Community community);
 
+    Result<CommunityVO> selectById(Integer id);
+
 }
