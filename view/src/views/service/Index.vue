@@ -29,7 +29,7 @@
       <div class="left">
 
         <div class="nav">
-          <div @click="select('1')"><i class="el-icon-user"></i>房东信息</div>
+          <div @click="select('1')"><i class="el-icon-user"></i>中介经理信息</div>
 
           <div @click="select('2-1')"><i class="el-icon-upload"></i>发布房源</div>
 

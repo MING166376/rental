@@ -45,7 +45,7 @@ public class DashboardServiceImpl implements DashboardService {
         List<ChartVO> chartVOList = new ArrayList<>();
         // 统计房东数量
         Integer landlordNumber = landlordMapper.listCount(new LandlordQueryDto());
-        ChartVO landlordChartVO = new ChartVO("房东人数（个）", landlordNumber);
+        ChartVO landlordChartVO = new ChartVO("中介经理人数（个）", landlordNumber);
         chartVOList.add(landlordChartVO);
         // 统计房源数量
         Integer houseNumber = houseMapper.listCount(new HouseQueryDto());

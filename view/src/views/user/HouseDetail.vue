@@ -209,7 +209,7 @@
       <div class="action-bar">
         <div class="contact-info">
           <div class="avatar">
-            <img :src="house.landlordAvatar" alt="房东头像">
+            <img :src="house.landlordAvatar" alt="中介经理头像">
           </div>
 
           <div class="info">
@@ -219,7 +219,7 @@
               <div class="save" @click="fetchLandlordHouseList">
                 <i class="el-icon-s-home"></i>
 
-                查看房东名下待租房源
+                查看中介经理名下待租房源
               </div>
 
             </div>
@@ -249,13 +249,13 @@
       <div class="house-order-drawer">
         <div class="contact-info">
           <div class="avatar">
-            <img :src="house.landlordAvatar" alt="房东头像">
+            <img :src="house.landlordAvatar" alt="中介经理头像">
           </div>
 
           <div class="info">
             <div class="name">{{ house.landlordName }}</div>
 
-            <div class="role">房东</div>
+            <div class="role">中介经理</div>
 
           </div>
 
@@ -403,7 +403,7 @@ export default {
       selctedDateSplitItem: null,
       houseOrderEvaluations: [],
       landlordHouseList: [],
-      directionLandlordHouseList: 'rtl', // 房东名下房源显示抽屉方向
+      directionLandlordHouseList: 'rtl', // 中介经理名下房源显示抽屉方向
       drawerLandlordHouseList: false,
     }
   },

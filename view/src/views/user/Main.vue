@@ -314,7 +314,7 @@ export default {
         const { data } = await this.$axios.post('/landlord/listUser', {});
         this.landlord = data;
       } catch (error) {
-        console.log("查询房东申请信息异常：", error);
+        console.log("查询中介经理申请信息异常：", error);
       }
     },
     changeAddress() {
