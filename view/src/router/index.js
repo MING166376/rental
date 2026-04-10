@@ -19,6 +19,21 @@ const routes = [
     component: () => import(`@/views/view/Index.vue`)
   },
   {
+    path: "/search-house",
+    name: 'searchHouse',
+    component: () => import(`@/views/view/SearchPage.vue`)
+  },
+  {
+    path: "/house-news-page",
+    name: 'houseNewsPage',
+    component: () => import(`@/views/view/HouseNewsPage.vue`)
+  },
+  {
+    path: "/house-detail-page",
+    name: 'houseDetailPage',
+    component: () => import(`@/views/view/HouseDetailPage.vue`)
+  },
+  {
     path: "/house-detail",
     name: 'houseDetail',
     component: () => import(`@/views/user/HouseDetail.vue`)
@@ -42,8 +57,8 @@ const routes = [
         component: () => import(`@/views/service/PostHouse.vue`),
       },
       {
-        path:'update-house',
-        component:() => import(`@/views/service/UpdateHouse.vue`),
+        path: 'update-house',
+        component: () => import(`@/views/service/UpdateHouse.vue`),
       },
       {
         path: 'house-list',
@@ -98,7 +113,7 @@ const routes = [
       },
       {
         path: "/landlord-manage",
-        name: '中介经理管理',
+        name: '房东管理',
         show: true,
         icon: 'el-icon-user-solid',
         component: () => import(`@/views/admin/LandlordManage.vue`),

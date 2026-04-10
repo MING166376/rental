@@ -8,49 +8,66 @@
         <transition name="fade" appear>
           <img src="/bag.png" alt="" class="illustration-img" />
         </transition>
+
       </div>
 
       <!-- 右侧登录表单 -->
       <div class="right-login">
         <transition-group name="slide-fade" tag="div">
           <div key="header" class="login-header">
-            <h2>Hi，终于等到你</h2>
-            <p class="welcome-text">开启你的租房之旅</p>
+            <h2>这里是海螺租房</h2>
+
+            <p class="welcome-text">开启你的便捷生活之旅</p>
+
           </div>
 
           <div key="account" class="input-group">
             <input v-model="account" class="login-input" placeholder="输入账号" @focus="animateInput('account')"
-              @blur="resetInput('account')" />
+                   @blur="resetInput('account')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="password" class="input-group">
             <input v-model="password" class="login-input" type="password" placeholder="输入密码"
-              @focus="animateInput('password')" @blur="resetInput('password')" />
+                   @focus="animateInput('password')" @blur="resetInput('password')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="button" class="button-group">
             <button class="login-btn" @click="login" @mouseenter="hoverButton(true)" @mouseleave="hoverButton(false)">
               <span class="btn-text">立即登录</span>
+
               <span class="btn-icon">→</span>
+
             </button>
+
           </div>
 
           <div key="footer" class="login-footer">
             <p>没有账号？<span class="register-link" @click="toDoRegister">点此注册</span></p>
+
           </div>
+
         </transition-group>
+
       </div>
+
     </div>
 
     <!-- 背景装饰元素 -->
     <div class="bg-elements">
       <div class="circle circle-1"></div>
+
       <div class="circle circle-2"></div>
+
       <div class="circle circle-3"></div>
+
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -150,11 +167,12 @@ export default {
     display: flex;
     border-radius: 16px;
     height: auto;
-    background: linear-gradient(135deg, #81aad3 0%, #5e9ddc 100%);
+    background-color: rgb(255,255,255);
+    // background: linear-gradient(135deg, #fbecbe 0%, #5e9ddc 100%);
     box-shadow: 0 20px 40px rgba(96, 84, 185, 0.2);
     overflow: hidden;
     z-index: 2;
-    max-width: 900px;
+    max-width: 750px;
     width: 100%;
     transition: all 0.3s ease;
 
@@ -179,7 +197,7 @@ export default {
     }
 
     .right-login {
-      width: 40%;
+      width: 50%;
       background-color: white;
       padding: 50px;
       display: flex;
@@ -260,7 +278,7 @@ export default {
           justify-content: space-between;
           width: 100%;
           height: 50px;
-          background: linear-gradient(90deg, #6a5acd, #89cff0);
+          background: linear-gradient(90deg, rgb(34, 181, 115), rgb(96, 225, 167));
           color: white;
           border: none;
           border-radius: 8px;
@@ -283,7 +301,7 @@ export default {
           }
 
           &:hover {
-            box-shadow: 0 10px 20px rgba(106, 90, 205, 0.3);
+            box-shadow: 0 10px 20px rgba(34, 181, 115, 0.3);
 
             .btn-text {
               transform: translateX(10px);
@@ -318,14 +336,14 @@ export default {
 
       .login-footer {
         margin-top: 20px;
-        text-align: center;
+        text-align: right;
 
         p {
           color: #718096;
           font-size: 14px;
 
           .register-link {
-            color: #6a5acd;
+            color: #333;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;

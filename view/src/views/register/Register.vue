@@ -8,6 +8,7 @@
         <transition name="fade" appear>
           <img src="/bag.png" alt="" class="illustration-img" />
         </transition>
+
       </div>
 
       <!-- 右侧注册表单 -->
@@ -15,55 +16,73 @@
         <transition-group name="slide-fade" tag="div">
           <div key="header" class="register-header">
             <h2>创建您的账户</h2>
-            <p class="welcome-text">开启您的租房之旅</p>
+
+            <p class="welcome-text">开启您的便捷生活之旅</p>
+
           </div>
 
           <div key="account" class="input-group">
             <input v-model="account" class="register-input" placeholder="输入账号" @focus="animateInput('account')"
-              @blur="resetInput('account')" />
+                   @blur="resetInput('account')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="name" class="input-group">
             <input v-model="username" class="register-input" placeholder="用户名" @focus="animateInput('name')"
-              @blur="resetInput('name')" />
+                   @blur="resetInput('name')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="password" class="input-group">
             <input v-model="password" class="register-input" type="password" placeholder="输入密码"
-              @focus="animateInput('password')" @blur="resetInput('password')" />
+                   @focus="animateInput('password')" @blur="resetInput('password')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="confirm" class="input-group">
             <input v-model="againPassword" class="register-input" type="password" placeholder="确认密码"
-              @focus="animateInput('confirm')" @blur="resetInput('confirm')" />
+                   @focus="animateInput('confirm')" @blur="resetInput('confirm')" />
             <span class="input-highlight"></span>
+
           </div>
 
           <div key="button" class="button-group">
             <button class="register-btn" @click="registerFunc" @mouseenter="hoverButton(true)"
-              @mouseleave="hoverButton(false)">
+                    @mouseleave="hoverButton(false)">
               <span class="btn-text">立即注册</span>
+
               <span class="btn-icon">→</span>
+
             </button>
+
           </div>
 
           <div key="footer" class="register-footer">
             <p>已有账户？<span class="login-link" @click="toDoLogin">返回登录</span></p>
+
           </div>
+
         </transition-group>
+
       </div>
+
     </div>
 
     <!-- 背景装饰元素 -->
     <div class="bg-elements">
       <div class="circle circle-1"></div>
+
       <div class="circle circle-2"></div>
+
       <div class="circle circle-3"></div>
+
     </div>
+
   </div>
+
 </template>
 
 <script>
@@ -159,7 +178,7 @@ export default {
     justify-content: left;
     margin: 20px 0;
     width: 100%;
-    max-width: 1200px;
+    max-width: 750px;
     z-index: 2;
   }
 
@@ -167,7 +186,7 @@ export default {
     display: flex;
     border-radius: 16px;
     height: auto;
-    background: linear-gradient(135deg, #6a5acd 0%, #89cff0 100%);
+    background-color: rgb(255, 255, 255);
     box-shadow: 0 20px 40px rgba(96, 84, 185, 0.2);
     overflow: hidden;
     z-index: 2;
@@ -276,7 +295,7 @@ export default {
           justify-content: space-between;
           width: 100%;
           height: 50px;
-          background: linear-gradient(90deg, #6a5acd, #89cff0);
+          background: linear-gradient(90deg, rgb(34, 181, 115), rgb(96, 225, 167));
           color: white;
           border: none;
           border-radius: 8px;
@@ -334,20 +353,20 @@ export default {
 
       .register-footer {
         margin-top: 20px;
-        text-align: center;
+        text-align: right;
 
         p {
           color: #718096;
           font-size: 14px;
 
           .login-link {
-            color: #6a5acd;
+            color: #333;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
 
             &:hover {
-              color: #89cff0;
+              // color: #89cff0;
               text-decoration: underline;
             }
           }
