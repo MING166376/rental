@@ -17,4 +17,6 @@ public interface HouseOrderEvaluationsService extends IService<HouseOrderEvaluat
 
     Result<String> saveEntity(HouseOrderEvaluations houseOrderEvaluations);
 
+    Result<List<HouseOrderEvaluationsVO>> houseList(Integer houseId);
+
 }

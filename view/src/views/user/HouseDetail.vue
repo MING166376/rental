@@ -32,11 +32,32 @@
         <h1 class="house-title">{{ house.name }}</h1>
 
         <div class="price-section">
-          <span class="price">¥{{ house.rent }}</span>
+          <div>
+            <span class="price">¥{{ house.rent }}</span>
 
-          <span class="unit">/月</span>
+            <span class="unit">/月</span>
 
-          <span class="deposit-method">{{ house.depositMethodName }}</span>
+            <span class="deposit-method">{{ house.depositMethodName }}</span>
+
+          </div>
+
+          <div style="display: flex;gap: 10px;">
+            <!-- <el-button type="primary" @click="contactLandlord">预约看房</el-button>
+
+            <el-button @click="collectHouseOperation">{{ saveList.length > 0 ? '取消收藏' : '收藏' }}</el-button> -->
+            <div class="save" @click="contactLandlord">
+              <i class="el-icon-date"></i>
+
+              预约看房
+            </div>
+
+            <div class="save" @click="collectHouseOperation">
+              <i :class="saveList.length > 0 ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
+
+              {{ saveList.length > 0 ? '取消收藏' : '收藏' }}
+            </div>
+
+          </div>
 
         </div>
 
@@ -142,6 +163,48 @@
 
       </div>
 
+      <!-- 服务评价 -->
+      <div class="description-section">
+        <div class="section-title">服务评价</div>
+
+        <div>
+          <div style="margin-bottom: 10px;" v-for="(evaluations, index) in houseOrderEvaluations"
+               :key="index">
+            <div>
+              <div
+                  style="margin-bottom: 6px;display: flex;justify-content: left;align-items: center;gap: 10px;">
+                <div>
+                  <img style="width: 30px;height: 30px;border-radius: 50%;" :src="evaluations.avatar"
+                       alt="">
+                </div>
+
+                <div>
+                  <div style="font-size: 16px;padding-left: 5px;">{{ evaluations.username }}</div>
+
+                  <div>
+                    <el-rate v-model="evaluations.score" disabled show-score text-color="#ff9900"
+                             score-template="{value}">
+                    </el-rate>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div
+                  style="color: #666666;background-color: rgb(246,246,246);padding: 10px;font-size: 14px;">
+                {{ evaluations.text }}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
       <!-- 底部操作栏 -->
       <div class="action-bar">
         <div class="contact-info">
@@ -159,9 +222,6 @@
         </div>
 
         <div class="action-buttons">
-          <el-button type="primary" @click="contactLandlord">预约看房</el-button>
-
-          <el-button @click="collectHouseOperation">{{ saveList.length > 0 ? '取消收藏' : '收藏' }}</el-button>
 
         </div>
 
@@ -280,6 +340,7 @@ export default {
       dateOrderList: [],
       selctedDateItem: null,
       selctedDateSplitItem: null,
+      houseOrderEvaluations: [],
     }
   },
   created() {
@@ -354,6 +415,15 @@ export default {
         console.error('查询预约日期失败:', e);
       }
     },
+    // 查询服务评价
+    async fetchHouseOrderEvaluations(id) {
+      try {
+        const { data } = await this.$axios.get(`/house-order-evaluations/houseList/${id}`);
+        this.houseOrderEvaluations = data;
+      } catch (e) {
+        console.error('查询预约看房服务评价失败:', e);
+      }
+    },
     async fetchFutureDateSplit() {
       try {
         const { data } = await this.$axios.get(`/house-order-info/split`);
@@ -378,6 +448,7 @@ export default {
       this.fetchHouseInfo(this.houseId);
       this.recordViewOperation(this.houseId);
       this.recordSaveStatus(this.houseId);
+      this.fetchHouseOrderEvaluations(this.houseId);
     },
     // 查询用户对于内容的收藏情况
     async recordSaveStatus(id) {
@@ -479,6 +550,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.save {
+  background-color: rgb(245, 245, 245);
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(240,240,240);
+  }
+}
+
 .house-order-drawer {
   padding: 20px;
 
@@ -621,6 +703,8 @@ export default {
   }
 
   .price-section {
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
 
     .price {

@@ -69,4 +69,17 @@ public class HouseOrderEvaluationsController {
         return houseOrderEvaluationsService.list(queryDto);
     }
 
+    /**
+     * 查询房源所产生的预约看房评价信息
+     *
+     * @param houseId 房屋ID
+     * @return Result<List < HouseOrderEvaluationsVO>> 响应结果
+     */
+    @Pager
+    @GetMapping(value = "/houseList/{houseId}")
+    @ResponseBody
+    public Result<List<HouseOrderEvaluationsVO>> houseList(@PathVariable Integer houseId) {
+        return houseOrderEvaluationsService.houseList(houseId);
+    }
+
 }

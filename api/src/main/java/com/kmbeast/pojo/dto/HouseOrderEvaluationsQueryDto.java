@@ -19,4 +19,8 @@ public class HouseOrderEvaluationsQueryDto extends QueryDto{
      * 房屋预约看房订单ID，外键，关联的是房屋预约看房信息表
      */
     private Integer houseOrderInfoId;
+    /**
+     * 房屋预约看房订单ID列表
+     */
+    private List<Integer> houseOrderInfoIds;
 }
