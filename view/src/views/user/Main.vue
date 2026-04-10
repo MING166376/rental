@@ -14,7 +14,7 @@
       <div class="header-content">
         <div class="main-nav">
           <Logo class="logo" :logoSize="Number(26)" :fontSize="Number(20)" textColor="rgb(51,51,51)"
-                sysName="房屋租赁系统" />
+                sysName="海螺租房" />
         </div>
 
         <nav class="main-nav">
@@ -284,6 +284,7 @@ export default {
         { path: '/home', icon: '', title: '首页' },
         { path: '/house-news', icon: 'el-icon-tickets', title: '房屋资讯' },
         { path: '/my-house-order-info', icon: 'el-icon-c-scale-to-original', title: '预约看房' },
+        { path: '/notice-list', icon: '', title: '系统公告' },
       ],
       userInfo: {},
       isAuthChecked: false,
