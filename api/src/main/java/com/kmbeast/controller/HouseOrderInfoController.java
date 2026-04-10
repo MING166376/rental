@@ -4,12 +4,16 @@ import com.kmbeast.aop.Pager;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseOrderInfoQueryDto;
+import com.kmbeast.pojo.em.DateTimeSplitEnum;
 import com.kmbeast.pojo.entity.HouseOrderInfo;
 import com.kmbeast.pojo.vo.HouseOrderInfoVO;
+import com.kmbeast.pojo.vo.SelectedVO;
 import com.kmbeast.service.HouseOrderInfoService;
+import com.kmbeast.utils.DateUtil;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +33,30 @@ public class HouseOrderInfoController {
     @ResponseBody
     public Result<String> save(@RequestBody HouseOrderInfo houseOrderInfo) {
         return houseOrderInfoService.saveEntity(houseOrderInfo);
+    }
+
+    /**
+     * 生成预约看房时间段
+     */
+    @GetMapping(value = "/split")
+    @ResponseBody
+    public Result<List<SelectedVO>> split() {
+        DateTimeSplitEnum[] dateTimeSplitEnums = DateTimeSplitEnum.values();
+        List<SelectedVO> selectedVOS = new ArrayList<>();
+        for (DateTimeSplitEnum dateTimeSplitEnum : dateTimeSplitEnums) {
+            SelectedVO selectedVO = new SelectedVO(dateTimeSplitEnum.getType(), dateTimeSplitEnum.getDetail());
+            selectedVOS.add(selectedVO);
+        }
+        return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 生成一段时间内的日期
+     */
+    @GetMapping(value = "/{days}")
+    @ResponseBody
+    public Result<List<String>> generateFutureDates(@PathVariable Integer days) {
+        return ApiResult.success(DateUtil.generateFutureDates(days));
     }
 
 

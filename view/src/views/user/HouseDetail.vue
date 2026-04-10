@@ -14,7 +14,7 @@
       <!-- 顶部图片展示区 -->
       <div class="gallery-section">
         <div class="main-image">
-          <img :src="coverList[currentImageIndex].url" alt="房屋封面图">
+          <img v-if="coverList.length > 0" :src="coverList[currentImageIndex].url" alt="房屋封面图">
         </div>
 
         <div class="thumbnail-list">
@@ -146,13 +146,13 @@
       <div class="action-bar">
         <div class="contact-info">
           <div class="avatar">
-            <img :src="house.landlordAvatar" alt="中介经理头像">
+            <img :src="house.landlordAvatar" alt="房东头像">
           </div>
 
           <div class="info">
             <div class="name">{{ house.landlordName }}</div>
 
-            <div class="role">中介经理</div>
+            <div class="role">房东</div>
 
           </div>
 
@@ -175,6 +175,82 @@
                    contentType="HOUSE_INFO" />
     </div>
 
+
+    <!-- 预约看房信息确认框 -->
+    <el-drawer title="预约看房" size="40%" :visible.sync="drawerHouseOrder" :direction="direction"
+               :before-close="handleClose">
+      <div class="house-order-drawer">
+        <div class="contact-info">
+          <div class="avatar">
+            <img :src="house.landlordAvatar" alt="房东头像">
+          </div>
+
+          <div class="info">
+            <div class="name">{{ house.landlordName }}</div>
+
+            <div class="role">房东</div>
+
+          </div>
+
+        </div>
+
+        <!-- 步骤条 -->
+        <div>
+          <el-steps :space="200" :active="activePath" finish-status="success">
+            <el-step title="选择日期"></el-step>
+
+            <el-step title="选择时间段"></el-step>
+
+          </el-steps>
+
+        </div>
+
+        <!-- 参数选择信息 -->
+        <div style="padding-block: 10px;">
+          <div v-if="activePath === 0">
+            <div :style="{ border: selctedDateItem === date ? '1px solid rgb(0, 119, 184)' : '' }"
+                 class="item-date" @click="dateSelected(date)" v-for="(date, index) in dateOrderList"
+                 :key="index">
+              {{ date }}
+            </div>
+
+          </div>
+
+          <div v-else-if="activePath === 1">
+            <div :style="{ border: selctedDateSplitItem && selctedDateSplitItem.value === split.value ? '1px solid rgb(0, 119, 184)' : '' }"
+                 class="item-date" @click="dateSplitSelected(split)"
+                 v-for="(split, index) in dateOrderSplitList" :key="index">
+              {{ split.label }}
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- 下一步 -->
+        <div style="text-align: center;display: flex;align-items: center;justify-content: center;">
+          <div class="primary-bt" @click="last">
+            <i class="el-icon-caret-right"></i>
+
+            上一步
+          </div>
+
+          <div class="primary-bt" @click="next">
+            <i class="el-icon-caret-right"></i>
+
+            下一步
+          </div>
+
+          <div class="info-bt" @click="handleConfirmOrder">
+            确定预约
+          </div>
+
+        </div>
+
+      </div>
+
+    </el-drawer>
+
   </div>
 
 </template>
@@ -185,6 +261,9 @@ export default {
   components: { Evaluations },
   data() {
     return {
+      activePath: 0,
+      drawerHouseOrder: false,
+      direction: 'rtl',
       startTime: 0,
       hasRecorded: false, // 防止重复记录
       indexCover: null,
@@ -196,11 +275,18 @@ export default {
       userId: null,
       avatar: '',
       saveList: [], // 用户收藏情况
+      dateOrderSplitList: [],
+      defaultSelectDays: 15,
+      dateOrderList: [],
+      selctedDateItem: null,
+      selctedDateSplitItem: null,
     }
   },
   created() {
     this.getPathId();
     this.fetchUserInfo();
+    this.fetchFutureDate(this.defaultSelectDays);
+    this.fetchFutureDateSplit();
   },
   mounted() {
     this.startTime = performance.now(); // 更精确的高精度时间
@@ -210,6 +296,46 @@ export default {
     window.removeEventListener('beforeunload', this.handlePageLeave);
   },
   methods: {
+    async handleConfirmOrder() {
+      if (this.selctedDateItem === null) {
+        this.$message.info('请选中日期');
+        return;
+      }
+      if (this.selctedDateSplitItem === null) {
+        this.$message.info('请选中预约时间段');
+        return;
+      }
+      try {
+        const houseOrderInfo = {
+          orderDate: this.selctedDateItem,
+          orderTimeSplit: this.selctedDateSplitItem.label,
+          houseId: this.houseId
+        };
+        await this.$axios.post(`/house-order-info/save`, houseOrderInfo);
+        this.$message('预约看房成功');
+        this.handleClose();
+      } catch (e) {
+        this.$message.info(e.message);
+        console.error('预约看房失败:', e);
+      }
+    },
+    dateSelected(date) {
+      this.selctedDateItem = date;
+    },
+    dateSplitSelected(date) {
+      this.selctedDateSplitItem = date;
+    },
+    last() {
+      if (this.activePath-- <= 0) this.activePath = 1;
+    },
+    next() {
+      if (this.activePath++ >= 1) this.activePath = 0;
+    },
+    handleClose() {
+      this.drawerHouseOrder = false;
+      this.selctedDateItem = null;
+      this.selctedDateSplitItem = null;
+    },
     handlePageLeave() {
       if (this.hasRecorded) return;
 
@@ -219,6 +345,22 @@ export default {
       this.hasRecorded = true;
 
       this.sendStayTime(stayTime);
+    },
+    async fetchFutureDate(days) {
+      try {
+        const { data } = await this.$axios.get(`/house-order-info/${days}`);
+        this.dateOrderList = data;
+      } catch (e) {
+        console.error('查询预约日期失败:', e);
+      }
+    },
+    async fetchFutureDateSplit() {
+      try {
+        const { data } = await this.$axios.get(`/house-order-info/split`);
+        this.dateOrderSplitList = data;
+      } catch (e) {
+        console.error('查询预约日期时间段失败:', e);
+      }
     },
     async sendStayTime(duration) {
       try {
@@ -310,7 +452,7 @@ export default {
       return iconMap[key] || 'el-icon-circle-check';
     },
     contactLandlord() {
-      this.$message.success('已发送联系请求给中介经理');
+      this.drawerHouseOrder = true;
     },
     // 收藏操作
     async collectHouseOperation() {
@@ -337,6 +479,59 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.house-order-drawer {
+  padding: 20px;
+
+  .contact-info {
+    display: flex;
+    padding: 10px 4px;
+    align-items: center;
+    background-color: rgb(246, 246, 246);
+    margin-bottom: 10px;
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      margin-right: 15px;
+      border-radius: 50%;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .info {
+      .name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .role {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+  }
+
+  .item-date {
+    padding: 10px 0;
+    background-color: rgb(246, 246, 246);
+    border: 1px solid rgb(246, 246, 246);
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(244, 244, 244);
+    }
+  }
+
+
+}
+
 .container {
   display: flex;
 }

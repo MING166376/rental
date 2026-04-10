@@ -31,7 +31,10 @@ public class HouseOrderInfoQueryDto extends QueryDto{
      * 预约状态（1：预约中；2：已预约；3：预约失败；4：已取消；5：已完成）
      */
     private Integer orderStatus;
-
+    /**
+     * 预约时间段
+     */
+    private String orderTimeSplit;
     /**
      * 房屋ID集合
      */

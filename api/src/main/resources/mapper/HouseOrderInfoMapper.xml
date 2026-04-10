@@ -23,6 +23,10 @@
                 AND hoi.user_id = #{userId}
             </if>
 
+            <if test="houseId != null">
+                AND hoi.house_id = #{houseId}
+            </if>
+
             <if test="orderStatus != null">
                 AND hoi.order_status = #{orderStatus}
             </if>
@@ -31,8 +35,8 @@
                 AND hoi.order_date = #{orderDate}
             </if>
 
-            <if test="orderDate != null">
-                AND hoi.order_date = #{orderDate}
+            <if test="orderTimeSplit != null">
+                AND hoi.order_time_split = #{orderTimeSplit}
             </if>
 
             <if test="houseIds != null and houseIds.size>0">
@@ -61,6 +65,10 @@
                 AND hoi.user_id = #{userId}
             </if>
 
+            <if test="houseId != null">
+                AND hoi.house_id = #{houseId}
+            </if>
+
             <if test="orderStatus != null">
                 AND hoi.order_status = #{orderStatus}
             </if>
@@ -69,8 +77,8 @@
                 AND hoi.order_date = #{orderDate}
             </if>
 
-            <if test="orderDate != null">
-                AND hoi.order_date = #{orderDate}
+            <if test="orderTimeSplit != null">
+                AND hoi.order_time_split = #{orderTimeSplit}
             </if>
 
             <if test="houseIds != null and houseIds.size>0">
