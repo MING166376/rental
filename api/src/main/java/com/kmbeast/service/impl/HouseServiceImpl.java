@@ -2,6 +2,7 @@ package com.kmbeast.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
+import com.kmbeast.mapper.FlowIndexMapper;
 import com.kmbeast.mapper.HouseMapper;
 import com.kmbeast.mapper.LandlordMapper;
 import com.kmbeast.pojo.api.ApiResult;
@@ -9,10 +10,13 @@ import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.dto.LandlordQueryDto;
 import com.kmbeast.pojo.em.*;
+import com.kmbeast.pojo.entity.FlowIndex;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.*;
+import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +35,10 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
 
     @Resource
     private LandlordMapper landlordMapper;
+    @Resource
+    private FlowIndexService flowIndexService;
+    @Autowired
+    private FlowIndexMapper flowIndexMapper;
 
     /**
      * 房屋列表查询
@@ -370,5 +378,58 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
                 .map(houseRentEnum -> new SelectedVO(houseRentEnum.getType(), houseRentEnum.getDetail()))
                 .collect(Collectors.toList());
         return ApiResult.success(selectedVOS);
+    }
+
+    /**
+     * 用户首页查询房屋信息 - 前提是只能查询上架的房屋信息
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Override
+    public Result<List<HouseListItemVO>> listUser(HouseQueryDto houseQueryDto) {
+        houseQueryDto.setStatus(HouseStatusEnum.STATUS_1.getType()); // 用户首页只能查询待租的房源信息
+        List<HouseListItemVO> houseListItemVOS = this.baseMapper.list(houseQueryDto);
+        dealHouseStatus(houseListItemVOS);
+        dealFlowIndex(houseListItemVOS);
+        Integer count = this.baseMapper.listCount(houseQueryDto);
+        return ApiResult.success(houseListItemVOS, count);
+    }
+
+    /**
+     * 记录展示流量
+     */
+    private void dealFlowIndex(List<HouseListItemVO> houseListItemVOS) {
+        List<FlowIndex> flowIndexList = new ArrayList<>();
+        for (HouseListItemVO houseListItemVO : houseListItemVOS) {
+            FlowIndex flowIndex = new FlowIndex();
+            flowIndex.setCreateTime(LocalDateTime.now());
+            flowIndex.setContentType("HOUSE_INFO");
+            flowIndex.setType(FlowIndexEnum.SHOW.getType());
+            flowIndex.setContentId(houseListItemVO.getId());
+            flowIndex.setUserId(LocalThreadHolder.getUserId() == null ? -1 : LocalThreadHolder.getUserId());
+            flowIndexList.add(flowIndex);
+        }
+        flowIndexService.saveBatch(flowIndexList);
+    }
+
+    /**
+     * 统计房屋流量
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < HouseFlowIndexVO>> 响应结果
+     */
+    @Override
+    public Result<List<HouseFlowIndexVO>> listFlowIndex(HouseQueryDto houseQueryDto) {
+        // 前提是房东来查的
+        // 1. 通过用户ID去查找用户自己已经认证的房东信息，取出他的房东ID
+        LandlordVO landlord = getLandlord();
+        AssertUtils.isTrue(landlord.getIsAudit(), "房东认证信息待审核，请稍后再试");
+        // 2. 凭着查出来的房东ID，去房屋信息表查询该房东自己名下维护的所有房屋ID，取列表
+        List<Integer> houseIds = this.baseMapper.selectIdsByLandlordId(landlord.getId());
+        if (houseIds.isEmpty()) {
+            return ApiResult.success(new ArrayList<>());
+        }
+        return null;
     }
 }

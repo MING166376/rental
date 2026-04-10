@@ -4,10 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
-import com.kmbeast.pojo.vo.HouseListItemVO;
-import com.kmbeast.pojo.vo.HouseVO;
-import com.kmbeast.pojo.vo.LivingFacilityVO;
-import com.kmbeast.pojo.vo.SelectedVO;
+import com.kmbeast.pojo.vo.*;
 
 import java.util.List;
 
@@ -48,5 +45,8 @@ public interface HouseService extends IService<House> {
 
     Result<List<SelectedVO>> houseRentRange();
 
+    Result<List<HouseFlowIndexVO>> listFlowIndex(HouseQueryDto houseQueryDto);
+
+    Result<List<HouseListItemVO>> listUser(HouseQueryDto houseQueryDto);
 
 }

@@ -4,12 +4,8 @@ import com.kmbeast.aop.Pager;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
-import com.kmbeast.pojo.em.HouseStatusEnum;
 import com.kmbeast.pojo.entity.House;
-import com.kmbeast.pojo.vo.HouseListItemVO;
-import com.kmbeast.pojo.vo.HouseVO;
-import com.kmbeast.pojo.vo.LivingFacilityVO;
-import com.kmbeast.pojo.vo.SelectedVO;
+import com.kmbeast.pojo.vo.*;
 import com.kmbeast.service.HouseService;
 import org.springframework.web.bind.annotation.*;
 
@@ -211,8 +207,7 @@ public class HouseController {
     @PostMapping(value = "/listUser")
     @ResponseBody
     public Result<List<HouseListItemVO>> listUser(@RequestBody HouseQueryDto houseQueryDto) {
-        houseQueryDto.setStatus(HouseStatusEnum.STATUS_1.getType()); // 用户首页只能查询待租的房源信息
-        return houseService.list(houseQueryDto);
+        return houseService.listUser(houseQueryDto);
     }
 
     /**
@@ -226,6 +221,19 @@ public class HouseController {
     @ResponseBody
     public Result<List<HouseListItemVO>> list(@RequestBody HouseQueryDto houseQueryDto) {
         return houseService.list(houseQueryDto);
+    }
+
+    /**
+     * 统计房屋流量
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < HouseFlowIndexVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listFlowIndex")
+    @ResponseBody
+    public Result<List<HouseFlowIndexVO>> listFlowIndex(@RequestBody HouseQueryDto houseQueryDto) {
+        return houseService.listFlowIndex(houseQueryDto);
     }
 
 }
