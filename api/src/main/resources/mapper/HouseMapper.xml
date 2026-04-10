@@ -39,6 +39,14 @@
 
     </select>
 
+    <select id="listCreate" resultMap="HouseListItemResultMap">
+        SELECT
+            h.id,
+            h.create_time
+        FROM house h
+        WHERE h.create_time BETWEEN #{startTime} AND #{endTime}
+    </select>
+
     <select id="list" resultMap="HouseListItemResultMap">
         SELECT
         h.id,
