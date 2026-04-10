@@ -6,7 +6,16 @@
       </div>
 
       <div class="create-time">
-        发布于{{ houseNews.createTime }}
+        <div class="time">
+          发布于{{ houseNews.createTime }}
+        </div>
+
+        <div class="save" @click="collectHouseOperation">
+          <i :class="saveList.length > 0 ? 'el-icon-star-on' : 'el-icon-star-off'"></i>
+
+          {{ saveList.length > 0 ? '取消收藏' : '收藏' }}
+        </div>
+
       </div>
 
       <div class="summary">
@@ -35,26 +44,57 @@ export default {
       houseNewsId: null,
       houseNews: {},
       userId: null,
-      avatar: ''
+      avatar: '',
+      saveList: [],
+      startTime: 0,
+      hasRecorded: false, // 防止重复记录
     }
   },
   created() {
     this.getPathId();
     this.fetchUserInfo();
   },
+  mounted() {
+    this.startTime = performance.now(); // 更精确的高精度时间
+    window.addEventListener('beforeunload', this.handlePageLeave);
+  },
+  beforeDestroy() {
+    window.removeEventListener('beforeunload', this.handlePageLeave);
+  },
   methods: {
+    handlePageLeave() {
+      if (this.hasRecorded) return;
+
+      const endTime = performance.now();
+      const stayTime = Math.floor(endTime - this.startTime);
+
+      this.hasRecorded = true;
+
+      this.sendStayTime(stayTime);
+    },
+    async sendStayTime(duration) {
+      try {
+        await this.$axios.post('/flow-index/stayOperation', {
+          contentId: this.houseNewsId,
+          times: duration,
+          contentType: 'HOUSE_NEWS'
+        });
+      } catch (e) {
+        console.error('记录停留时间失败:', e);
+      }
+    },
     getPathId() {
       this.houseNewsId = this.$route.query.id;
       this.fetchHouseNewsInfo(this.houseNewsId);
-      // this.recordViewOperation(this.houseId);
-      // this.recordSaveStatus(this.houseId);
+      this.recordViewOperation(this.houseNewsId);
+      this.recordSaveStatus(this.houseNewsId);
     },
     // 查询用户对于内容的收藏情况
     async recordSaveStatus(id) {
       try {
         const flowIndexQueryDto = {
           contentId: id,
-          contentType: 'HOUSE_INFO',
+          contentType: 'HOUSE_NEWS',
           type: 2
         }
         const { data } = await this.$axios.post(`/flow-index/listUser`, flowIndexQueryDto);
@@ -68,7 +108,7 @@ export default {
       try {
         const flowIndex = {
           contentId: id,
-          contentType: 'HOUSE_INFO'
+          contentType: 'HOUSE_NEWS'
         }
         await this.$axios.post(`/flow-index/viewOperation`, flowIndex);
       } catch (error) {
@@ -98,8 +138,8 @@ export default {
     async collectHouseOperation() {
       try {
         const flowIndex = {
-          contentId: this.houseId,
-          contentType: 'HOUSE_INFO'
+          contentId: this.houseNewsId,
+          contentType: 'HOUSE_NEWS'
         }
         const { message } = await this.$axios.post(`/flow-index/saveOperation`, flowIndex);
         this.$notify.success({
@@ -140,7 +180,21 @@ export default {
 
     .create-time {
       font-size: 14px;
-      margin-block: 10px;
+      margin-block: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+
+      .save {
+        background-color: rgb(240, 240, 240);
+        padding: 4px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgb(234, 234, 234);
+        }
+      }
     }
 
     .summary {
