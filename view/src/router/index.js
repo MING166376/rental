@@ -129,6 +129,14 @@ const routes = [
         meta: { requireAuth: true },
       },
       {
+        path: "/house-order-info-manage",
+        name: '预约看房管理',
+        show: true,
+        icon: 'el-icon-s-grid',
+        component: () => import(`@/views/admin/HouseOrderInfoManage.vue`),
+        meta: { requireAuth: true },
+      },
+      {
         path: "/notice-manage",
         name: '公告管理',
         show: true,
