@@ -3,18 +3,27 @@ package com.kmbeast.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.mapper.FlowIndexMapper;
+import com.kmbeast.mapper.HouseMapper;
+import com.kmbeast.mapper.HouseNewsMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.FlowIndexQueryDto;
+import com.kmbeast.pojo.dto.HouseNewsQueryDto;
+import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.em.FlowIndexEnum;
 import com.kmbeast.pojo.entity.FlowIndex;
+import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.HouseNewsListVO;
 import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.utils.AssertUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 流量指标业务逻辑接口实现类
@@ -22,6 +31,10 @@ import java.util.Objects;
 @Service
 public class FlowIndexServiceImpl extends ServiceImpl<FlowIndexMapper, FlowIndex> implements FlowIndexService {
 
+    @Resource
+    private HouseMapper houseMapper;
+    @Resource
+    private HouseNewsMapper houseNewsMapper;
 
     /**
      * 查询流量指标列表
@@ -157,4 +170,59 @@ public class FlowIndexServiceImpl extends ServiceImpl<FlowIndexMapper, FlowIndex
         save(entity);
         return ApiResult.success();
     }
+
+    /**
+     * 查询用户收藏的房屋数据
+     *
+     * @param flowIndexQueryDto 查询参数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Override
+    public Result<List<HouseListItemVO>> saveListHouse(FlowIndexQueryDto flowIndexQueryDto) {
+        flowIndexQueryDto.setContentType("HOUSE_INFO");
+        List<FlowIndex> flowIndexList = getFlowList(flowIndexQueryDto);
+        if (flowIndexList.isEmpty()) {
+            return ApiResult.success(new ArrayList<>());
+        }
+        Integer count = this.baseMapper.listCount(flowIndexQueryDto);
+        List<Integer> houseIds = flowIndexList.stream()
+                .map(FlowIndex::getContentId)
+                .collect(Collectors.toList());
+        HouseQueryDto houseQueryDto = new HouseQueryDto();
+        houseQueryDto.setIds(houseIds);
+        List<HouseListItemVO> houseListItemVOS = houseMapper.list(houseQueryDto);
+        return ApiResult.success(houseListItemVOS, count);
+    }
+
+    /**
+     * 查询用户收藏的房屋资讯数据
+     *
+     * @param flowIndexQueryDto 查询参数
+     * @return Result<List < HouseNewsListVO>> 响应结果
+     */
+    @Override
+    public Result<List<HouseNewsListVO>> saveListHouseNews(FlowIndexQueryDto flowIndexQueryDto) {
+        flowIndexQueryDto.setContentType("HOUSE_NEWS");
+        List<FlowIndex> flowIndexList = getFlowList(flowIndexQueryDto);
+        if (flowIndexList.isEmpty()) {
+            return ApiResult.success(new ArrayList<>());
+        }
+        Integer count = this.baseMapper.listCount(flowIndexQueryDto);
+        List<Integer> houseNewsId = flowIndexList.stream()
+                .map(FlowIndex::getContentId)
+                .collect(Collectors.toList());
+        HouseNewsQueryDto houseNewsQueryDto = new HouseNewsQueryDto();
+        houseNewsQueryDto.setIds(houseNewsId);
+        List<HouseNewsListVO> houseNewsListVOS = houseNewsMapper.list(houseNewsQueryDto);
+        return ApiResult.success(houseNewsListVOS, count);
+    }
+
+    private List<FlowIndex> getFlowList(FlowIndexQueryDto flowIndexQueryDto) {
+        flowIndexQueryDto.setType(FlowIndexEnum.COLLECTION.getType()); // 设置为收藏类型
+        flowIndexQueryDto.setUserId(LocalThreadHolder.getUserId()); // 设置上操作者ID
+        return this.baseMapper.list(flowIndexQueryDto);
+    }
+
 }
+
+

@@ -220,6 +220,12 @@ const routes = [
         component: () => import(`@/views/user/NoticeList.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/my-save",
+        name: '我的收藏',
+        component: () => import(`@/views/user/Save.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   }
 ];

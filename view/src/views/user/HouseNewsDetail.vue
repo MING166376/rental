@@ -148,7 +148,7 @@ export default {
           position: 'buttom-right',
           duration: 1000,
         });
-        this.recordSaveStatus(this.houseId);
+        this.recordSaveStatus(this.houseNewsId);
       } catch (error) {
         this.$message.error(error);
         console.info(error);

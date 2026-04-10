@@ -6,6 +6,8 @@ import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.FlowIndexQueryDto;
 import com.kmbeast.pojo.entity.FlowIndex;
+import com.kmbeast.pojo.vo.HouseListItemVO;
+import com.kmbeast.pojo.vo.HouseNewsListVO;
 import com.kmbeast.service.FlowIndexService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -93,6 +95,32 @@ public class FlowIndexController {
     @ResponseBody
     public Result<List<FlowIndex>> list(@RequestBody FlowIndexQueryDto flowIndexQueryDto) {
         return flowIndexService.list(flowIndexQueryDto);
+    }
+
+    /**
+     * 查询用户收藏的房屋数据
+     *
+     * @param flowIndexQueryDto 查询参数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/saveListHouse")
+    @ResponseBody
+    public Result<List<HouseListItemVO>> saveListHouse(@RequestBody FlowIndexQueryDto flowIndexQueryDto) {
+        return flowIndexService.saveListHouse(flowIndexQueryDto);
+    }
+
+    /**
+     * 查询用户收藏的房屋资讯数据
+     *
+     * @param flowIndexQueryDto 查询参数
+     * @return Result<List < HouseNewsListVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/saveListHouseNews")
+    @ResponseBody
+    public Result<List<HouseNewsListVO>> saveListHouseNews(@RequestBody FlowIndexQueryDto flowIndexQueryDto) {
+        return flowIndexService.saveListHouseNews(flowIndexQueryDto);
     }
 
 }

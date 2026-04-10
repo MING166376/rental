@@ -18,6 +18,14 @@
                 AND hn.title LIKE concat('%',#{title},'%')
             </if>
 
+            <if test="ids != null and ids.size > 0 ">
+                AND hn.id IN
+                <foreach collection="ids" item="id" separator="," open="(" close=")" index="index">
+                    #{id}
+                </foreach>
+
+            </if>
+
         </where>
 
         <if test="current != null and size != null">
