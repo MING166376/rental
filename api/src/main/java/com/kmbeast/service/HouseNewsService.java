@@ -3,7 +3,6 @@ package com.kmbeast.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseNewsQueryDto;
-import com.kmbeast.pojo.entity.FlowIndex;
 import com.kmbeast.pojo.entity.HouseNews;
 import com.kmbeast.pojo.vo.HouseNewsListVO;
 
@@ -18,10 +17,9 @@ public interface HouseNewsService extends IService<HouseNews> {
 
     Result<String> saveEntity(HouseNews houseNews);
 
-   // Result<HouseNewsListVO> selectById(Integer id);
-
     Result<HouseNews> selectById(Integer id);
 
     Result<String> updateEntity(HouseNews houseNews);
 
+    Result<List<HouseNewsListVO>> recommend(Integer count);
 }

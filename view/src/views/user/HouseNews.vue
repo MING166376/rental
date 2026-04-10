@@ -47,7 +47,16 @@
 
       <!-- 推荐区域 -->
       <div class="right">
-        推荐
+        <h2 style="margin-top: 0;">资讯推荐</h2>
+
+        <div  @click="houseNewsClick(news)" class="item-news" v-for="(news,index) in houseRecommedNewsList" :key="index">
+          <img :src="news.cover" alt="">
+          <div class="text-item">
+            {{ news.title }}
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -63,6 +72,7 @@ export default {
   components: { AutoInput },
   data() {
     return {
+      houseRecommedNewsList: [], // 推荐的房屋
       apiResult: {
         data: [],
         total: 0,
@@ -71,12 +81,23 @@ export default {
         current: 1,
         size: 10,
       },
+      recommendCount: 3, //向用户推荐的房屋资讯条数
     };
   },
   created() {
     this.fetchFreshData();
+    this.fetchRecommendHouseNews(this.recommendCount);
   },
   methods: {
+    async fetchRecommendHouseNews(count) {
+      try {
+        const { data } = await this.$axios.get(`/house-news/recommend/${count}`);
+        this.houseRecommedNewsList = data;
+      } catch (error) {
+        this.$message.error('获取推荐的房屋资讯信息失败');
+        console.error(error);
+      }
+    },
     // 房源资讯点击之后,跳转至详情页
     houseNewsClick(item) {
       window.open(`/house-news-detail?id=${item.id}`, '_blank');
@@ -122,6 +143,30 @@ export default {
 </script>
 
 <style scoped>
+
+.item-news{
+  /* padding: 10px; */
+  box-sizing: border-box;
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
+  img{
+    width: 100%;
+    border-radius: 5px;
+  }
+  .text-item{
+    position: absolute;
+    bottom: 5px;
+    font-weight: 900;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    color: rgb(255,255,255);
+    background-color: rgba(0,0,0,0.3);
+  }
+}
+
 .actions {
   display: flex;
   gap: 20px;

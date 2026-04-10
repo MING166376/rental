@@ -74,4 +74,16 @@ public class HouseNewsController {
         return houseNewsService.list(houseNewsQueryDto);
     }
 
+    /**
+     * 房屋资讯推荐
+     *
+     * @param count 推荐的条数
+     * @return Result<List < HouseNewsListVO>> 响应结果
+     */
+    @GetMapping(value = "/recommend/{count}")
+    @ResponseBody
+    public Result<List<HouseNewsListVO>> recommend(@PathVariable Integer count) {
+        return houseNewsService.recommend(count);
+    }
+
 }

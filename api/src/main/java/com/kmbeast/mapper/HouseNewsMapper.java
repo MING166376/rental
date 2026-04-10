@@ -14,6 +14,8 @@ import java.util.List;
 @Mapper
 public interface HouseNewsMapper extends BaseMapper<HouseNews> {
 
+    List<Integer> getIds();
+
     List<HouseNewsListVO> list(HouseNewsQueryDto houseNewsQueryDto);
 
     Integer listCount(HouseNewsQueryDto houseNewsQueryDto);

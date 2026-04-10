@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kmbeast.mapper.HouseNewsMapper">
 
+
+
     <select id="list" resultMap="BaseResultMap">
         SELECT id,
         title,
@@ -46,6 +48,10 @@
 
         </where>
 
+    </select>
+
+    <select id="getIds" resultType="java.lang.Integer">
+        SELECT id FROM house_news
     </select>
 
     <!-- 通用查询映射结果 -->
