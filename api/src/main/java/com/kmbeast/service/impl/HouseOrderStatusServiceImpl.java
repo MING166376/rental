@@ -44,7 +44,7 @@ public class HouseOrderStatusServiceImpl extends ServiceImpl<HouseOrderStatusMap
                 houseOrderStatusVO.setOldStatusText(originText);
                 // 新状态
                 String newText = HouseOrderStatusEnum.getDetail(houseOrderStatusVO.getNewId());
-                houseOrderStatusVO.setOldStatusText(newText);
+                houseOrderStatusVO.setNewStatusText(newText);
             }
         }
     }

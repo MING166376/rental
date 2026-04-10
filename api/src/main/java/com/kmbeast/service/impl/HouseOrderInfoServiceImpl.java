@@ -3,18 +3,21 @@ package com.kmbeast.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.mapper.HouseOrderInfoMapper;
+import com.kmbeast.mapper.HouseOrderStatusMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseOrderInfoQueryDto;
 import com.kmbeast.pojo.em.DateTimeSplitEnum;
 import com.kmbeast.pojo.em.HouseOrderStatusEnum;
 import com.kmbeast.pojo.entity.HouseOrderInfo;
+import com.kmbeast.pojo.entity.HouseOrderStatus;
 import com.kmbeast.pojo.vo.HouseOrderInfoVO;
 import com.kmbeast.service.HouseOrderInfoService;
 import com.kmbeast.utils.AssertUtils;
 import com.kmbeast.utils.DateFormatUtil;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +29,8 @@ import java.util.Objects;
 @Service
 public class HouseOrderInfoServiceImpl extends ServiceImpl<HouseOrderInfoMapper, HouseOrderInfo> implements HouseOrderInfoService {
 
+    @Resource
+    private HouseOrderStatusMapper houseOrderStatusMapper;
 
     /**
      * 查询预约看房列表
@@ -99,8 +104,34 @@ public class HouseOrderInfoServiceImpl extends ServiceImpl<HouseOrderInfoMapper,
     @Override
     public Result<String> updateEntity(HouseOrderInfo houseOrderInfo) {
         judge(houseOrderInfo);
+        // 状态流转处理
+        statusFlow(houseOrderInfo);
         updateById(houseOrderInfo);
         return ApiResult.success();
+    }
+
+    /**
+     * 状态流转过程
+     *
+     * @param houseOrderInfo 预约看房实体
+     */
+    private void statusFlow(HouseOrderInfo houseOrderInfo){
+        // 最终：记录状态流转
+        // 关键点：原始状态是啥？最终状态是啥？什么情况下需要记录？
+        HouseOrderInfo orderInfo = getById(houseOrderInfo.getId());
+        AssertUtils.notNull(orderInfo, "订单查询异常");
+        AssertUtils.notNull(orderInfo.getOrderStatus(), "订单原始状态缺失");
+        Integer originStatus = orderInfo.getOrderStatus(); //原始状态
+        //如果传进来的状态，跟数据库存储的原始状态不一样，证明状态发生了流转此时要记录流转的变化路径
+        if(!Objects.equals(originStatus, houseOrderInfo.getOrderStatus())){
+            HouseOrderStatus houseOrderStatus = new HouseOrderStatus();
+            houseOrderStatus.setOriginStatus(originStatus);
+            houseOrderStatus.setNewId(houseOrderInfo.getOrderStatus());
+            houseOrderStatus.setCreateTime(LocalDateTime.now()); //流转时间
+            houseOrderStatus.setHouseOrderInfoId(houseOrderInfo.getId());
+            houseOrderStatusMapper.insert(houseOrderStatus); //状态流转入库
+
+        }
     }
 
     private void judge(HouseOrderInfo houseOrderInfo) {

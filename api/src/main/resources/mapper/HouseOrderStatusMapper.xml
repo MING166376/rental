@@ -37,7 +37,7 @@
     <resultMap id="BaseResultMap" type="com.kmbeast.pojo.vo.HouseOrderStatusVO">
         <id column="id" property="id"/>
         <result column="origin_status" property="originStatus"/>
-        <result column="mew_id" property="newId"/>
+        <result column="new_id" property="newId"/>
         <result column="house_order_info_id" property="houseOrderInfoId"/>
         <result column="create_time" property="createTime"/>
     </resultMap>

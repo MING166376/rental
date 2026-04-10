@@ -162,7 +162,12 @@
 
       </div>
 
+      <!-- 状态流转区域 -->
       <div>
+        <status-flow :status-records="houseOrderStatusList" />
+      </div>
+
+      <div v-if="houseOrderInfo.orderStatus === 5">
         <!-- 没有评价过,在此评价 -->
         <div v-if="houseOrderEvaluations.length === 0">
           <div
@@ -234,8 +239,9 @@
 <script>
 import Editor from "@/components/Editor.vue";
 import Tab from "@/components/Tab" // 导入封装好的Tab组件
+import StatusFlow from '@/components/StatusFlow.vue'
 export default {
-  components: { Editor, Tab },
+  components: { Editor, Tab, StatusFlow },
   data() {
     return {
       apiParam: {
@@ -258,6 +264,7 @@ export default {
       deletedItem: {},
       content: '',
       houseOrderEvaluations: [],
+      houseOrderStatusList: [],
     };
   },
   created() {
@@ -336,9 +343,23 @@ export default {
         });
       }
     },
-    update(item) {
-      this.dialogVisible = true;
-      this.houseOrderInfo = { ...item };
+    async update(item) {
+      // 查询预约看房状态流转
+      try {
+        const queryDto = {
+          houseOrderInfoId: item.id
+        };
+        const { data } = await this.$axios.post(`/house-order-status/list`, queryDto);
+        this.houseOrderStatusList = data;
+        this.dialogVisible = true;
+        this.houseOrderInfo = { ...item };
+      } catch (error) {
+        this.$notify.info({
+          title: '错误',
+          message: error.message,
+          duration: 1000,
+        });
+      }
     },
     async handleSaveConfirm() {
       try {
