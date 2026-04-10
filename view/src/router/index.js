@@ -180,6 +180,12 @@ const routes = [
         component: () => import(`@/views/user/HouseNews.vue`),
         meta: { requireAuth: true },
       },
+      {
+        path: "/my-house-order-info",
+        name: '我的预约看房',
+        component: () => import(`@/views/user/MyHouseOrderInfo.vue`),
+        meta: { requireAuth: true },
+      },
     ]
   }
 ];

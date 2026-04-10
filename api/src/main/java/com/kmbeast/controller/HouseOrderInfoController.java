@@ -1,6 +1,7 @@
 package com.kmbeast.controller;
 
 import com.kmbeast.aop.Pager;
+import com.kmbeast.context.LocalThreadHolder;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseOrderInfoQueryDto;
@@ -78,6 +79,20 @@ public class HouseOrderInfoController {
     public Result<String> delete(@PathVariable Integer id) {
         houseOrderInfoService.removeById(id);
         return ApiResult.success("预约看房删除成功");
+    }
+
+    /**
+     * 查询用户自己的预约看房信息
+     *
+     * @param houseOrderInfoQueryDto 查询参数
+     * @return Result<List < HouseOrderInfoVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listUser")
+    @ResponseBody
+    public Result<List<HouseOrderInfoVO>> listUser(@RequestBody HouseOrderInfoQueryDto houseOrderInfoQueryDto) {
+        houseOrderInfoQueryDto.setUserId(LocalThreadHolder.getUserId());
+        return houseOrderInfoService.list(houseOrderInfoQueryDto);
     }
 
     /**

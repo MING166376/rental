@@ -97,7 +97,7 @@
     <resultMap id="BaseResultMap" type="com.kmbeast.pojo.vo.HouseOrderInfoVO">
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
-        <result column="user_name" property="username"/>
+        <result column="username" property="username"/>
         <result column="avatar" property="avatar"/>
         <result column="house_id" property="houseId"/>
         <result column="house_name" property="houseName"/>
