@@ -1,6 +1,6 @@
 <template>
   <div class="container-home">
-    <!-- 中介经理认证 -->
+    <!-- 房东认证 -->
     <div class="reply" v-if="landlord === null">
       <div class="title">
         空置房别闲置，你的房源值得更多租客看见
@@ -8,7 +8,7 @@
 
       <div class="content">
         告别传统贴条招租，平台千万级流量曝光，精准匹配优质租客，让空房快速 “活” 起来，租金收益不空置。
-        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为中介经理</span>
+        <span @click="reply" style="text-decoration: underline;cursor: pointer;">申请成为房东</span>
 
       </div>
 
@@ -278,7 +278,7 @@
         </div>
 
         <!-- 分页区域 -->
-        <div>
+        <div style="display: flex;justify-content: right;">
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                          :current-page="houseQueryDto.current" :page-sizes="[10, 20]" :page-size="houseQueryDto.size"
                          layout="total, sizes, prev, pager, next, jumper" :total="total"></el-pagination>
@@ -289,7 +289,16 @@
 
       <!-- 额外拓展信息 -->
       <div class="right">
-        测试数据
+        <h2 style="margin-top: 0;">资讯推荐</h2>
+
+        <div  @click="houseItemClick(house.id)" class="item-house" v-for="(house,index) in houseRecommedList" :key="index">
+          <img :src="house.cover" alt="">
+          <div class="text-item">
+            {{ house.name }}
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -347,7 +356,7 @@ export default {
         rentalType: null,
       },
       userArea: {}, //用户常居住地信息
-      landlord: {}, // 中介经理认证信息
+      landlord: {}, // 房东认证信息
       houseQueryDto: {
         current: 1, // 默认查第一页
         size: 10, // 一页查10条
@@ -367,9 +376,12 @@ export default {
       cityArea: [], // 市区信息
       topAreaId: null, // 省份ID
       cityAreaId: null,
+      houseRecommedList: [], // 推荐的房源
+      recommendCount: 3, // 推荐房屋数3户
     }
   },
   created() {
+    this.fetchRecommendHouseNews(this.recommendCount);
     this.fetchLandlordData();
     this.fetchHouseData();
     this.fetchUserAreaData();
@@ -384,6 +396,15 @@ export default {
     this.fetchHouseRent();
   },
   methods: {
+    async fetchRecommendHouseNews(count) {
+      try {
+        const { data } = await this.$axios.get(`/house/recommend/${count}`);
+        this.houseRecommedList = data;
+      } catch (error) {
+        this.$message.error('获取推荐的房屋信息失败');
+        console.error(error);
+      }
+    },
     // 输入框组件输入回传
     listener(text) {
       this.houseQueryDto.name = text; // 赋值查询条件的内容
@@ -491,7 +512,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseTypeList');
         this.houseTypeList = data;
         this.houseTypeList.unshift({ value: null, label: '不限' });
-        this.houseTypeClick(this.houseTypeList[0]);
+        // this.houseTypeClick(this.houseTypeList[0]);
       } catch (error) {
         console.log("查询房屋类型异常：", error);
       }
@@ -502,7 +523,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseDirectionList');
         this.houseDirectionList = data;
         this.houseDirectionList.unshift({ value: null, label: '不限' });
-        this.houseDirectionClick(this.houseDirectionList[0]);
+        // this.houseDirectionClick(this.houseDirectionList[0]);
       } catch (error) {
         console.log("查询房屋朝向异常：", error);
       }
@@ -513,7 +534,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSizedList');
         this.houseSizedList = data;
         this.houseSizedList.unshift({ value: null, label: '不限' });
-        this.houseSizedClick(this.houseSizedList[0]);
+        // this.houseSizedClick(this.houseSizedList[0]);
       } catch (error) {
         console.log("查询房屋户型异常：", error);
       }
@@ -524,7 +545,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseDepositMethodList');
         this.houseDepositMethodList = data;
         this.houseDepositMethodList.unshift({ value: null, label: '不限' });
-        this.houseDepositMethodClick(this.houseDepositMethodList[0]);
+        // this.houseDepositMethodClick(this.houseDepositMethodList[0]);
       } catch (error) {
         console.log("查询房屋户型异常：", error);
       }
@@ -535,7 +556,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSubwayList');
         this.houseSubwayList = data;
         this.houseSubwayList.unshift({ value: null, label: '不限' });
-        this.houseSubwayClick(this.houseSubwayList[0]);
+        // this.houseSubwayClick(this.houseSubwayList[0]);
       } catch (error) {
         console.log("查询房屋是否临近地铁异常：", error);
       }
@@ -546,7 +567,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseFitmentStatusList');
         this.houseFitmentStatusList = data;
         this.houseFitmentStatusList.unshift({ value: null, label: '不限' });
-        this.houseFitmentStatusClick(this.houseFitmentStatusList[0]);
+        // this.houseFitmentStatusClick(this.houseFitmentStatusList[0]);
       } catch (error) {
         console.log("查询房屋装修状态异常：", error);
       }
@@ -557,7 +578,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseRentalTypeList');
         this.houseRentalTypeList = data;
         this.houseRentalTypeList.unshift({ value: null, label: '不限' });
-        this.houseRentalTypeClick(this.houseRentalTypeList[0]);
+        // this.houseRentalTypeClick(this.houseRentalTypeList[0]);
       } catch (error) {
         console.log("查询房屋租赁方式异常：", error);
       }
@@ -568,7 +589,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseSizeNumber');
         this.houseSizeNumberList = data;
         this.houseSizeNumberList.unshift({ value: null, label: '不限' });
-        this.houseSizeNumberClick(this.houseSizeNumberList[0]);
+        // this.houseSizeNumberClick(this.houseSizeNumberList[0]);
       } catch (error) {
         console.log("查询房屋面积查询条件异常：", error);
       }
@@ -579,7 +600,7 @@ export default {
         const { data } = await this.$axios.get('/house/houseRentRange');
         this.houseRentRangeList = data;
         this.houseRentRangeList.unshift({ value: null, label: '不限' });
-        this.houseRentClick(this.houseRentRangeList[0]);
+        // this.houseRentClick(this.houseRentRangeList[0]);
       } catch (error) {
         console.log("查询房屋租金查询条件异常：", error);
       }
@@ -618,7 +639,7 @@ export default {
         console.log(this.landlord);
 
       } catch (error) {
-        console.log("查询中介经理申请信息异常：", error);
+        console.log("查询房东申请信息异常：", error);
       }
     },
     async fetchUserAreaData() {
@@ -638,6 +659,30 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+.item-house{
+  /* padding: 10px; */
+  box-sizing: border-box;
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
+  img{
+    width: 100%;
+    border-radius: 5px;
+  }
+  .text-item{
+    position: absolute;
+    bottom: 5px;
+    font-weight: 900;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    color: rgb(255,255,255);
+    background-color: rgba(0,0,0,0.3);
+  }
+}
+
 .area {
   margin-block: 20px;
   font-size: 14px;
@@ -659,15 +704,15 @@ export default {
 }
 
 .condition-container {
-  border: 1px solid rgb(240, 240, 240);
+  box-shadow: 0 4px 6px rgb(240,240,240);
   padding: 10px 20px;
+  border-radius: 10px;
 }
 
 .condition {
   display: flex;
   justify-content: left;
   align-items: center;
-  border-bottom: 1px solid rgb(240, 240, 240);
   padding-block: 12px;
 
   .point-text {
@@ -741,7 +786,7 @@ export default {
 .content {
   display: flex;
   justify-content: space-between;
-  gap: 1px;
+
 
   .house-container {
     width: 80%;
@@ -752,12 +797,15 @@ export default {
 
   .right {
     width: 300px;
+    margin-top: 10px;
+    padding: 10px 20px;
+    box-sizing: border-box;
     background-color: rgb(255, 255, 255);
   }
 }
 
 .container-home {
-  height: 2000px;
+  min-height: 100vh;
 }
 
 .reply {

@@ -19,14 +19,12 @@ import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
 import com.kmbeast.utils.DateUtil;
+import com.kmbeast.utils.UserBasedCFUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -504,5 +502,63 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
         flowIndexQueryDto.setEndTime(queryDto.getEndTime());
         return flowIndexQueryDto;
     }
+
+    /**
+     * 房屋推荐
+     *
+     * @param count 推荐的条数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @Override
+    public Result<List<HouseListItemVO>> recommend(Integer count) {
+        AssertUtils.notNull(count, "推荐条数不能为空");
+        FlowIndexQueryDto flowIndexQueryDto = new FlowIndexQueryDto();
+        flowIndexQueryDto.setContentType("HOUSE_INFO"); // 做的是房屋的推荐，所以模块设置为房屋模块
+        // 获取所有的房屋ID列表
+        List<Integer> houseIds = this.baseMapper.getIds();
+        if (houseIds.isEmpty()) {
+            return ApiResult.success(new ArrayList<>());
+        }
+        // 获取用户对于房屋资讯的评分
+        List<ScoreVO> scores = flowIndexMapper.getScores(flowIndexQueryDto);
+        if (scores.isEmpty()) {
+            List<HouseListItemVO> houseListItemVOS = queryHouseNews(houseIds.size() > count ? houseIds.subList(0, count) : houseIds);
+            return ApiResult.success(houseListItemVOS);
+        }
+        // 构建用户对于物品评分的指定数据结构
+        List<UserBasedCFUtil.Score> scoreList = scores.stream().map(score -> new UserBasedCFUtil.Score(
+                score.getUserId(),
+                score.getContentId(),
+                score.getScore()
+        )).collect(Collectors.toList());
+        // 构建用户对于房屋的评分矩阵
+        Map<Integer, Map<Integer, Double>> userItemMatrix =
+                UserBasedCFUtil.buildUserItemMatrix(houseIds, scoreList);
+        // 创建协同过滤工具实例
+        UserBasedCFUtil cfUtil = new UserBasedCFUtil(userItemMatrix);
+        // 算出向指定这个用户推荐的房屋资讯
+        List<Integer> itemIds = cfUtil.recommendItems(LocalThreadHolder.getUserId(), count);
+        // 冷启动：用户是新用户，没有一丁点儿的互动数据，何谈兴趣？何谈推荐？
+        if (itemIds.isEmpty()) {
+            // 如果最初查出来的房屋的ID列表，比咱们接口需要的更多，则截取，反之直接用
+            List<HouseListItemVO> houseListItemVOS = queryHouseNews(houseIds.size() > count ? houseIds.subList(0, count) : houseIds);
+            return ApiResult.success(houseListItemVOS);
+        }
+        List<HouseListItemVO> houseListItemVOS = queryHouseNews(itemIds);
+        return ApiResult.success(houseListItemVOS);
+    }
+
+    /**
+     * 通过房屋资讯的ID列表查询房屋资讯
+     *
+     * @param ids 房屋资讯ID列表
+     * @return List<HouseNewsListVO>
+     */
+    private List<HouseListItemVO> queryHouseNews(List<Integer> ids) {
+        HouseQueryDto houseQueryDto = new HouseQueryDto();
+        houseQueryDto.setIds(ids);
+        return this.baseMapper.list(houseQueryDto);
+    }
+
 
 }

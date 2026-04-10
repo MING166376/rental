@@ -1,12 +1,14 @@
 package com.kmbeast.controller;
 
 import com.kmbeast.aop.Pager;
+import com.kmbeast.mapper.HouseMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.House;
 import com.kmbeast.pojo.vo.*;
 import com.kmbeast.service.HouseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,8 @@ public class HouseController {
 
     @Resource
     private HouseService houseService;
+    @Autowired
+    private HouseMapper houseMapper;
 
     /**
      * 新增房屋信息
@@ -249,4 +253,17 @@ public class HouseController {
         return houseService.listChart(houseQueryDto);
     }
 
+    /**
+     * 房屋推荐
+     *
+     * @param count 推荐的条数
+     * @return Result<List < HouseListItemVO>> 响应结果
+     */
+    @GetMapping(value = "/recommend/{count}")
+    @ResponseBody
+    public Result<List<HouseListItemVO>> recommend(@PathVariable Integer count) {
+        return houseService.recommend(count);
+    }
+
 }
+

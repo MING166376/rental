@@ -3,9 +3,9 @@
     <!-- 顶部导航栏 -->
     <header class="app-header">
       <div class="position" v-if="userArea.length !== 0">
-        <i class="el-icon-location"></i>
+        <i style="font-size: 18px;margin-right: 6px;" class="el-icon-location"></i>
 
-        <span>{{ userArea[0].topAreaName }} · {{ userArea[0].cityAreaName }}</span>
+        <span style="font-size: 18px;">{{ userArea[0].topAreaName }} · {{ userArea[0].cityAreaName }}</span>
 
         <span @click="changeAddress" class="change-address">更换常居住地</span>
 
@@ -19,7 +19,7 @@
 
         <nav class="main-nav">
           <router-link v-for="item in navItems" :key="item.path" :to="item.path" class="nav-item"
-                       active-class="active" @click="closeMobileMenu">
+                       active-class="active" @click="closeMobileMenu(item)">
             <i style="margin-right: 6px;" :class="item.icon"></i>
 
             {{ item.title }}
@@ -285,6 +285,7 @@ export default {
         { path: '/house-news', icon: 'el-icon-tickets', title: '房屋资讯' },
         { path: '/my-house-order-info', icon: 'el-icon-c-scale-to-original', title: '预约看房' },
         { path: '/notice-list', icon: '', title: '系统公告' },
+        { path: '/my-save', icon: '', title: '我的收藏' },
       ],
       userInfo: {},
       isAuthChecked: false,
@@ -451,7 +452,7 @@ export default {
       clearRole();
       this.$router.push('/');
     },
-    closeMobileMenu() {
+    closeMobileMenu(item) {
       this.isMobileMenuOpen = false;
     },
     async handleAuthentication() {
@@ -519,17 +520,20 @@ export default {
 
 <style scoped lang="scss">
 .position {
-  padding: 10px 60px;
-  background-color: rgb(64, 158, 255);
-  color: rgb(255, 255, 255);
+  padding: 20px 65px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(51, 51, 51);
 
   .change-address {
     font-size: 12px;
     margin-left: 10px;
     cursor: pointer;
+    background-color: rgb(240, 240, 240);
+    padding: 4px 10px;
+    border-radius: 5px;
 
     &:hover {
-      color: rgb(240, 240, 240);
+      background-color: rgb(230, 230, 230);
     }
   }
 }
@@ -551,7 +555,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: rgb(240, 240, 240);
+  // background-color: rgb(240, 240, 240);
 
 }
 
@@ -586,12 +590,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 26px;
 }
 
 .nav-item {
   color: rgb(51, 51, 51);
-  font-size: 14px;
+  font-size: 16px;
   text-decoration: none;
   height: 74px;
   line-height: 74px;
@@ -695,8 +699,10 @@ export default {
 .app-main {
   flex: 1;
   box-sizing: border-box;
-  background-color: rgb(240, 240, 240);
+  // background-color: rgb(240, 240, 240);
   border-radius: 5px;
+  padding-inline: 20px;
+  box-sizing: border-box;
 }
 
 .user-avatar-container {

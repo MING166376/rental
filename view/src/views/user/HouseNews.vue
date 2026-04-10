@@ -5,6 +5,11 @@
       <!-- 左边列表 -->
       <div class="left">
         <div class="top-header">
+          <div class="nav-left">
+            <h2>房屋资讯</h2>
+
+          </div>
+
           <div class="nav-right">
             <AutoInput placeholder="资讯标题" @listener="listener" />
           </div>
@@ -49,7 +54,8 @@
       <div class="right">
         <h2 style="margin-top: 0;">资讯推荐</h2>
 
-        <div  @click="houseNewsClick(news)" class="item-news" v-for="(news,index) in houseRecommedNewsList" :key="index">
+        <div @click="houseNewsClick(news)" class="item-news" v-for="(news, index) in houseRecommedNewsList"
+             :key="index">
           <img :src="news.cover" alt="">
           <div class="text-item">
             {{ news.title }}
@@ -143,18 +149,19 @@ export default {
 </script>
 
 <style scoped>
-
-.item-news{
+.item-news {
   /* padding: 10px; */
   box-sizing: border-box;
   position: relative;
   margin-bottom: 10px;
   cursor: pointer;
-  img{
+
+  img {
     width: 100%;
     border-radius: 5px;
   }
-  .text-item{
+
+  .text-item {
     position: absolute;
     bottom: 5px;
     font-weight: 900;
@@ -162,8 +169,8 @@ export default {
     padding: 10px;
     font-size: 14px;
     box-sizing: border-box;
-    color: rgb(255,255,255);
-    background-color: rgba(0,0,0,0.3);
+    color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -192,7 +199,7 @@ export default {
 
 .top-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
@@ -311,7 +318,7 @@ export default {
 
 .pager {
   display: flex;
-  justify-content: left;
+  justify-content: right;
   margin-top: 20px;
 }
 </style>

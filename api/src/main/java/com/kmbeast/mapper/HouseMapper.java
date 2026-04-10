@@ -1,6 +1,7 @@
 package com.kmbeast.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.kmbeast.pojo.api.Result;
 import com.kmbeast.pojo.dto.AreaQueryDto;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.Area;
@@ -33,5 +34,8 @@ public interface HouseMapper extends BaseMapper<House> {
     List<HouseFlowIndexVO> flowIndexList(HouseQueryDto queryDto);
 
     List<ChartVO> cityHouseRange(@Param(value = "limitCount") Integer limitCount);
+
+    List<Integer> getIds();
+
 
 }

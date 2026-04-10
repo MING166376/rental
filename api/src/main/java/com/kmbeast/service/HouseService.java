@@ -51,4 +51,6 @@ public interface HouseService extends IService<House> {
 
     Result<List<ChartVO>> listChart(HouseQueryDto houseQueryDto);
 
+    Result<List<HouseListItemVO>> recommend(Integer count);
+
 }

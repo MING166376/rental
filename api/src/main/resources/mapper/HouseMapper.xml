@@ -322,6 +322,12 @@
             LIMIT #{limitCount}
     </select>
 
+    <select id="getIds" resultType="java.lang.Integer">
+
+        SELECT id FROM house
+
+    </select>
+
 
     <resultMap id="HouseVOResultMap" type="com.kmbeast.pojo.vo.HouseVO">
         <id column="id" property="id"/>
