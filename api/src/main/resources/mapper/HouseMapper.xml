@@ -3,34 +3,33 @@
 <mapper namespace="com.kmbeast.mapper.HouseMapper">
 
     <select id="getById" resultMap="HouseVOResultMap">
-        SELECT
-            h.id,
-            h.name,
-            h.detail,
-            h.cover,
-            h.covers,
-            h.area_id,
-            h.community_id,
-            h.sized_id,
-            h.type_id,
-            h.size_number,
-            h.direction_id,
-            h.fitment_status_id,
-            h.rent,
-            h.deposit_method_id,
-            h.is_subway,
-            h.floor,
-            h.subway_line,
-            h.living_facilities,
-            h.rental_type,
-            h.status,
-            h.create_time,
-            c.name AS community_name,
-            a.parent_id AS top_area_id,
-            a.name AS city_area_name,
-            l.id AS landlord_id,
-            u.username AS landlord_name,
-            u.avatar AS landlord_avatar
+        SELECT h.id,
+               h.name,
+               h.detail,
+               h.cover,
+               h.covers,
+               h.area_id,
+               h.community_id,
+               h.sized_id,
+               h.type_id,
+               h.size_number,
+               h.direction_id,
+               h.fitment_status_id,
+               h.rent,
+               h.deposit_method_id,
+               h.is_subway,
+               h.floor,
+               h.subway_line,
+               h.living_facilities,
+               h.rental_type,
+               h.status,
+               h.create_time,
+               c.name      AS community_name,
+               a.parent_id AS top_area_id,
+               a.name      AS city_area_name,
+               l.id        AS landlord_id,
+               u.username  AS landlord_name,
+               u.avatar    AS landlord_avatar
         FROM house h
                  LEFT JOIN community c ON c.id = h.community_id
                  LEFT JOIN area a ON a.id = h.area_id
@@ -185,6 +184,15 @@
             </if>
 
         </where>
+
+    </select>
+
+
+    <select id="selectIdsByLandlordId" resultType="java.lang.Integer">
+
+        SELECT h.id
+        FROM house h
+        WHERE h.landlord_id = #{landlordId}
 
     </select>
 

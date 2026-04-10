@@ -23,4 +23,7 @@ public interface HouseMapper extends BaseMapper<House> {
     Integer listCount(HouseQueryDto houseQueryDto);
 
     HouseVO getById(@Param(value = "id") Integer id);
+
+    List<Integer> selectIdsByLandlordId(@Param(value = "landlordId") Integer landlordId);
+
 }

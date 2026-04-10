@@ -96,6 +96,20 @@ public class HouseOrderInfoController {
     }
 
     /**
+     * 查询房东名下维护的房屋所产生的预约看房信息
+     *
+     * @param houseOrderInfoQueryDto 查询参数
+     * @return Result<List < HouseOrderInfoVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listLandlord")
+    @ResponseBody
+    public Result<List<HouseOrderInfoVO>> listLandlord(@RequestBody HouseOrderInfoQueryDto houseOrderInfoQueryDto) {
+        return houseOrderInfoService.listLandlord(houseOrderInfoQueryDto);
+    }
+
+
+    /**
      * 查询预约看房信息
      *
      * @param houseOrderInfoQueryDto 查询参数
