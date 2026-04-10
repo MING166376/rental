@@ -65,6 +65,13 @@
                                     </span>
 
                   <el-dropdown-menu slot="dropdown">
+                    <!-- 只有预约看房状态完成之后才需要服务评价 -->
+                    <el-dropdown-item v-if="scope.row.orderStatus === 5"
+                                      @click.native="serviceEvaluations(scope.row)"
+                                      icon="el-icon-document-checked">
+                      服务评价
+                    </el-dropdown-item>
+
                     <el-dropdown-item @click.native="update(scope.row)" icon="el-icon-edit">
                       修改
                     </el-dropdown-item>
@@ -155,6 +162,56 @@
 
       </div>
 
+      <div>
+        <!-- 没有评价过,在此评价 -->
+        <div v-if="houseOrderEvaluations.length === 0">
+          <div
+              style="box-sizing: border-box;width: 100%;height: 40px;line-height: 40px;padding-left: 10px;margin-block: 6px;background-color: rgb(246,246,246);">
+            *您当前没有进行服务评价,请做出评价
+          </div>
+
+          <div style="margin-block: 10px;">
+            <el-rate v-model="apiParam.score" show-text>
+            </el-rate>
+
+          </div>
+
+          <div>
+            <el-input type="textarea" :rows="2" placeholder="评价内容" v-model="apiParam.text">
+            </el-input>
+
+          </div>
+
+          <div style="margin-block: 20px;">
+                        <span style="margin-left: 0;" class="info-bt" @click="evaluationsSave">
+                            立即提交
+                        </span>
+
+          </div>
+
+        </div>
+
+        <!-- 已经评价过,只做服务的评价渲染 -->
+        <div v-else>
+          <h3>我的服务评价</h3>
+
+          <div style="background-color: rgb(250,250,250);padding: 10px 20px;">
+            <div style="margin-block: 10px;">
+              <el-rate disabled v-model="houseOrderEvaluations[0].score" show-text>
+              </el-rate>
+
+            </div>
+
+            <div style="font-size: 14px;margin-block: 10px;">
+              {{ houseOrderEvaluations[0].text }}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
       <span slot="footer" class="dialog-footer">
                 <span class="primary-bt" @click="cancelOperation">取消操作</span>
 
@@ -181,7 +238,10 @@ export default {
   components: { Editor, Tab },
   data() {
     return {
-
+      apiParam: {
+        score: 3,
+        text: ''
+      },
       dialogVisible: false,
       direction: 'rtl',
       dialogDeletedVisible: false,
@@ -197,6 +257,7 @@ export default {
       },
       deletedItem: {},
       content: '',
+      houseOrderEvaluations: [],
     };
   },
   created() {
@@ -210,6 +271,20 @@ export default {
         this.$message.success("取消预约成功");
         this.fetchFreshData();
         this.cancelOperation();
+      } catch (error) {
+        this.$notify.info({
+          title: '错误',
+          message: error.message,
+          duration: 1000,
+        });
+      }
+    },
+    async evaluationsSave() {
+      try {
+        this.apiParam.houseOrderInfoId = this.houseOrderInfo.id;
+        await this.$axios.post(`/house-order-evaluations/save`, this.apiParam);
+        this.$message.success("服务评价成功");
+        this.serviceEvaluations(this.houseOrderInfo);
       } catch (error) {
         this.$notify.info({
           title: '错误',
@@ -242,6 +317,24 @@ export default {
     handleChange(obj) {
       this.houseOrderInfoQueryDto.orderStatus = Number(obj.value); // 转成数值类型，再赋值
       this.fetchFreshData(); // 重新加载数据
+    },
+    async serviceEvaluations(item) {
+      // 额外查询评价的信息
+      try {
+        const queryDto = {
+          houseOrderInfoId: item.id
+        };
+        const { data } = await this.$axios.post(`/house-order-evaluations/list`, queryDto);
+        this.houseOrderEvaluations = data;
+        this.dialogVisible = true;
+        this.houseOrderInfo = { ...item };
+      } catch (error) {
+        this.$notify.info({
+          title: '错误',
+          message: error.message,
+          duration: 1000,
+        });
+      }
     },
     update(item) {
       this.dialogVisible = true;
