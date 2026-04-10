@@ -5,6 +5,7 @@ import com.kmbeast.pojo.dto.AreaQueryDto;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.entity.Area;
 import com.kmbeast.pojo.entity.House;
+import com.kmbeast.pojo.vo.ChartVO;
 import com.kmbeast.pojo.vo.HouseFlowIndexVO;
 import com.kmbeast.pojo.vo.HouseListItemVO;
 import com.kmbeast.pojo.vo.HouseVO;
@@ -30,5 +31,7 @@ public interface HouseMapper extends BaseMapper<House> {
     List<Integer> selectIdsByLandlordId(@Param(value = "landlordId") Integer landlordId);
 
     List<HouseFlowIndexVO> flowIndexList(HouseQueryDto queryDto);
+
+    List<ChartVO> cityHouseRange(@Param(value = "limitCount") Integer limitCount);
 
 }

@@ -14,4 +14,6 @@ public interface DashboardService {
 
     Result<List<ChartVO>> houseLineChart(Integer days);
 
+    Result<List<ChartVO>> cityHouseRange(Integer limit);
+
 }

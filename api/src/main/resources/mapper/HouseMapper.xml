@@ -40,9 +40,8 @@
     </select>
 
     <select id="listCreate" resultMap="HouseListItemResultMap">
-        SELECT
-            h.id,
-            h.create_time
+        SELECT h.id,
+               h.create_time
         FROM house h
         WHERE h.create_time BETWEEN #{startTime} AND #{endTime}
     </select>
@@ -312,6 +311,15 @@
         FROM house h
         WHERE h.landlord_id = #{landlordId}
 
+    </select>
+
+    <select id="cityHouseRange" resultType="com.kmbeast.pojo.vo.ChartVO">
+        SELECT a.name,
+               COUNT(h.id) AS count
+        FROM house h
+            LEFT JOIN area a ON a.id = h.area_id
+        GROUP BY a.name
+            LIMIT #{limitCount}
     </select>
 
 

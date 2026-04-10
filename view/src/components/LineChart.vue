@@ -6,10 +6,7 @@
       <span class="time-show">
         <span class="top-bar">时间选择</span>
 
-        <el-select size="mini" v-model="selectedValue" placeholder="期限">
-          <el-option v-for="item in options" :key="item.num" :label="item.name" :value="item.num" />
-        </el-select>
-
+        <Tab :buttons="options" :initialActive="selectedValueItem" @change="handleChange" />
       </span>
 
     </div>
@@ -30,8 +27,9 @@
 
 <script>
 import * as echarts from 'echarts';
-
+import Tab from "@/components/Tab" // 导入封装好的Tab组件
 export default {
+  components: { Tab }, // 注册组件
   name: 'DialogLine',
   props: {
     tag: {
@@ -62,16 +60,17 @@ export default {
     return {
       chart: null,
       options: [
-        { num: 7, name: '7天内' },
-        { num: 30, name: '30天内' },
-        { num: 60, name: '60天内' }
+        { value: 7, label: '一周内' },
+        { value: 30, label: '一个月内' },
+        { value: 90, label: '三个月内' },
+        { value: 365, label: '一年内' }
       ],
-      selectedValue: '',
+      selectedValueItem: 365,
       isChartReady: false
     }
   },
   watch: {
-    selectedValue(newVal) {
+    selectedValueItem(newVal) {
       this.$emit('on-selected', newVal);
     },
     values: {
@@ -97,6 +96,9 @@ export default {
     });
   },
   methods: {
+    handleChange(obj) {
+      this.selectedValueItem = obj.value;
+    },
     initChart() {
       if (!this.$refs.chart) return;
 

@@ -85,4 +85,14 @@ public class DashboardServiceImpl implements DashboardService {
         List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(days, dateTimeList);
         return ApiResult.success(chartVOS);
     }
+
+    /**
+     * 管理员首页 - 城市待租房源分布
+     */
+    @Override
+    public Result<List<ChartVO>> cityHouseRange(Integer limit) {
+        AssertUtils.notNull(limit, "查询条数不能为空");
+        List<ChartVO> chartVOS = houseMapper.cityHouseRange(limit);
+        return ApiResult.success(chartVOS);
+    }
 }

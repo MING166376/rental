@@ -36,4 +36,13 @@ public class DashboardController {
         return dashboardService.houseLineChart(days);
     }
 
+    /**
+     * 管理员首页 - 城市待租房源分布
+     */
+    @GetMapping(value = "/cityHouseRange/{limit}")
+    @ResponseBody
+    public Result<List<ChartVO>> cityHouseRange(@PathVariable Integer limit) {
+        return dashboardService.cityHouseRange(limit);
+    }
+
 }
