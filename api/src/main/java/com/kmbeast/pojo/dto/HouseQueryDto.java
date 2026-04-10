@@ -81,4 +81,12 @@ public class HouseQueryDto extends QueryDto {
      * 房屋ID列表
      */
     private List<Integer> ids;
+    /**
+     * 行为类型
+     */
+    private Integer type;
+    /**
+     * 查询的天数
+     */
+    private Integer days;
 }

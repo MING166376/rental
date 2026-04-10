@@ -49,4 +49,6 @@ public interface HouseService extends IService<House> {
 
     Result<List<HouseListItemVO>> listUser(HouseQueryDto houseQueryDto);
 
+    Result<List<ChartVO>> listChart(HouseQueryDto houseQueryDto);
+
 }

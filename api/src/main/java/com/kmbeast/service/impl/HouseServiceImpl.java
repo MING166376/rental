@@ -2,12 +2,15 @@ package com.kmbeast.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kmbeast.context.LocalThreadHolder;
+import com.kmbeast.mapper.FlowIndexMapper;
 import com.kmbeast.mapper.HouseMapper;
 import com.kmbeast.mapper.LandlordMapper;
 import com.kmbeast.pojo.api.ApiResult;
 import com.kmbeast.pojo.api.Result;
+import com.kmbeast.pojo.dto.FlowIndexQueryDto;
 import com.kmbeast.pojo.dto.HouseQueryDto;
 import com.kmbeast.pojo.dto.LandlordQueryDto;
+import com.kmbeast.pojo.dto.QueryDto;
 import com.kmbeast.pojo.em.*;
 import com.kmbeast.pojo.entity.FlowIndex;
 import com.kmbeast.pojo.entity.House;
@@ -15,6 +18,7 @@ import com.kmbeast.pojo.vo.*;
 import com.kmbeast.service.FlowIndexService;
 import com.kmbeast.service.HouseService;
 import com.kmbeast.utils.AssertUtils;
+import com.kmbeast.utils.DateUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,6 +39,8 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
     private LandlordMapper landlordMapper;
     @Resource
     private FlowIndexService flowIndexService;
+    @Resource
+    private FlowIndexMapper flowIndexMapper;
 
     /**
      * 房屋列表查询
@@ -407,6 +413,7 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
             flowIndexList.add(flowIndex);
         }
         flowIndexService.saveBatch(flowIndexList);
+        flowIndexList.clear();
     }
 
     /**
@@ -456,6 +463,46 @@ public class HouseServiceImpl extends ServiceImpl<HouseMapper, House> implements
                 vo.setClickRate(0.0);
             }
         }
+    }
+
+    /**
+     * 流量指标可视化
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @Override
+    public Result<List<ChartVO>> listChart(HouseQueryDto houseQueryDto) {
+        flowIndexListParamJudge(houseQueryDto);
+        FlowIndexQueryDto flowIndexQueryDto = createFlowIndexQueryDto(houseQueryDto);
+        List<FlowIndex> flowIndexList = flowIndexMapper.list(flowIndexQueryDto);
+        if (flowIndexList == null || flowIndexList.isEmpty()) {
+            return ApiResult.success(new ArrayList<>());
+        }
+        // 只取出里面的创建时间，形成一个新的数组
+        List<LocalDateTime> dateTimeList = flowIndexList.stream()
+                .map(FlowIndex::getCreateTime)
+                .collect(Collectors.toList());
+        List<ChartVO> chartVOS = DateUtil.countDatesWithinRange(houseQueryDto.getDays(), dateTimeList);
+        return ApiResult.success(chartVOS);
+    }
+
+    private void flowIndexListParamJudge(HouseQueryDto houseQueryDto) {
+        AssertUtils.notNull(houseQueryDto, "查询条件不能为空");
+        AssertUtils.notNull(houseQueryDto.getId(), "内容ID不能为空");
+        AssertUtils.notNull(houseQueryDto.getType(), "流量类型不能为空");
+        AssertUtils.notNull(houseQueryDto.getDays(), "查询天数不能为空");
+    }
+
+    private FlowIndexQueryDto createFlowIndexQueryDto(HouseQueryDto houseQueryDto) {
+        FlowIndexQueryDto flowIndexQueryDto = new FlowIndexQueryDto();
+        flowIndexQueryDto.setContentType("HOUSE_INFO");
+        flowIndexQueryDto.setContentId(houseQueryDto.getId());
+        flowIndexQueryDto.setType(houseQueryDto.getType());
+        QueryDto queryDto = DateUtil.startAndEndTime(houseQueryDto.getDays());
+        flowIndexQueryDto.setStartTime(queryDto.getStartTime());
+        flowIndexQueryDto.setEndTime(queryDto.getEndTime());
+        return flowIndexQueryDto;
     }
 
 }

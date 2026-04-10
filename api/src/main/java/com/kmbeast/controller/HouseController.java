@@ -236,4 +236,17 @@ public class HouseController {
         return houseService.listFlowIndex(houseQueryDto);
     }
 
+    /**
+     * 流量指标可视化
+     *
+     * @param houseQueryDto 查询参数
+     * @return Result<List < ChartVO>> 响应结果
+     */
+    @Pager
+    @PostMapping(value = "/listChart")
+    @ResponseBody
+    public Result<List<ChartVO>> listChart(@RequestBody HouseQueryDto houseQueryDto) {
+        return houseService.listChart(houseQueryDto);
+    }
+
 }
