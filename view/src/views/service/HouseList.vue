@@ -1,122 +1,137 @@
 <template>
-  <div class="container">
-    <div class="nav-text">
-      我发布的房源
-    </div>
+  <div class="house-management-container">
+    <!-- 顶部标题和操作栏 -->
+    <div class="management-header">
+      <h2 class="page-title">我发布的房源</h2>
 
-    <div class="top-healder">
-      <div class="nav-left">
-        <Tab :buttons="[
-                    { label: '全部', value: 'null' },
-                    { label: '待租', value: '1' },
-                    { label: '下架', value: '2' }
-                ]" initialActive="null" @change="handleChange" />
-      </div>
-
-      <div class="nav-right">
-        <div class="primary-bt" @click="addHouse">
-          <i class="el-icon-plus"></i>
-
-          新增房源
+      <div class="action-bar">
+        <div class="filter-section">
+          <Tab :buttons="[
+                        { label: '全部', value: 'null' },
+                        { label: '待租', value: '1' },
+                        { label: '下架', value: '2' }
+                    ]" initialActive="null" @change="handleChange" />
         </div>
 
-        <div>
-          <AutoInput placeholder="房源名" @listener="listener" />
-        </div>
+        <div class="operation-section">
+          <div class="primary-bt" @click="addHouse">
+            <i class="el-icon-plus"></i>
 
-      </div>
-
-    </div>
-
-    <div>
-      <!-- 房源信息渲染区域 -->
-      <div class="house-container">
-        <div class="house-item" v-for="item in apiResult.data" :key="item.id">
-          <div>
-            <img :src="item.cover" alt="" srcset="">
+            新增房屋
           </div>
 
-          <div>
-            <div class="name">
-              {{ item.name }}
-              <span class="status1" v-if="item.status === 1">待租</span>
+          <AutoInput placeholder="搜索房源名称" @listener="listener" class="search-input" />
+        </div>
 
-              <span class="status2" v-else-if="item.status === 2">下架</span>
+      </div>
 
-            </div>
+    </div>
 
-            <div class="time">
-              {{ item.createTime }}
-            </div>
-
-            <div class="point">
-              <!-- 指标信息区域 -->
-              <div class="left">
-                <div>
-                  <i class="el-icon-location-information"></i>
-
-                  {{ item.cityAreaName }} · {{ item.communityName }}
-                </div>
-
-                <div>
-                  {{ item.sizeNumber }}㎡
-                </div>
-
-                <div>
-                  {{ item.directionName }}
-                </div>
-
-                <div>
-                  {{ item.fitmentStatusName }}
-                </div>
-
-                <div>
-                  {{ item.depositMethodName }}
-                </div>
-
-              </div>
-
-              <!-- 功能操作区 -->
-              <div class="right">
-                <div @click="houseStatusDeal(item.id)"><i
-                    :class="item.status === 1 ? 'el-icon-bottom' : 'el-icon-top'"></i>{{ item.status
-                === 1 ? '房源下架' : '房源上架' }}</div>
-
-                <div @click="updateHouseInfo(item.id)"><i class="el-icon-edit"></i>编辑</div>
-
-                <div @click="deletedHouse(item)"><i class="el-icon-delete"></i>删除</div>
-
-              </div>
-
-            </div>
-
-            <div class="rent">
-              ￥{{ item.rent }}
-            </div>
-
+    <!-- 房源列表 -->
+    <div class="house-list">
+      <div v-for="item in apiResult.data" :key="item.id" class="house-card"
+           :class="{ 'status-available': item.status === 1, 'status-offline': item.status === 2 }">
+        <div class="house-image">
+          <img :src="item.cover" alt="房源封面">
+          <div class="status-badge">
+            {{ item.status === 1 ? '待租' : '下架' }}
           </div>
 
         </div>
 
-      </div>
+        <div class="house-info">
+          <div class="info-header">
+            <h3 class="house-name">{{ item.name }}</h3>
 
-      <!-- 分页组件区域 -->
-      <div class="pager">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                       :current-page="houseQueryDto.current" :page-sizes="[10, 20]" :page-size="houseQueryDto.size"
-                       layout="total, sizes, prev, pager, next, jumper" :total="apiResult.total"></el-pagination>
+            <div class="create-time">{{ formatDate(item.createTime) }}</div>
+
+          </div>
+
+          <div class="info-meta">
+            <div class="meta-item">
+              <i class="el-icon-location-information"></i>
+
+              {{ item.cityAreaName }} · {{ item.communityName }}
+            </div>
+
+            <div class="meta-item">
+              <i class="el-icon-house"></i>
+
+              {{ item.sizeNumber }}㎡ · {{ item.directionName }}
+            </div>
+
+            <div class="meta-item">
+              <i class="el-icon-setting"></i>
+
+              {{ item.fitmentStatusName }} · {{ item.depositMethodName }}
+            </div>
+
+          </div>
+
+          <div class="info-footer">
+            <div class="rent-price">¥{{ item.rent }}</div>
+
+            <div class="action-buttons">
+              <div @click="houseStatusDeal(item.id)">
+                <i :class="item.status === 1 ? 'el-icon-bottom' : 'el-icon-top'"></i>
+
+                {{ item.status === 1 ? '下架房源' : '上架房源' }}
+              </div>
+
+              <div @click="updateHouseInfo(item.id)">
+                <i class="el-icon-edit"></i>
+
+                修改
+              </div>
+
+              <div @click="deletedHouse(item)">
+                <i class="el-icon-delete"></i>
+
+                删除
+              </div>
+
+              <!-- <el-button size="mini" @click="houseStatusDeal(item.id)"
+                  :type="item.status === 1 ? 'warning' : 'success'">
+                  {{ item.status === 1 ? '下架房源' : '上架房源' }}
+              </el-button>
+
+              <el-button size="mini" @click="updateHouseInfo(item.id)" icon="el-icon-edit">
+                  编辑
+              </el-button>
+
+              <el-button size="mini" type="danger" @click="deletedHouse(item)" icon="el-icon-delete">
+                  删除
+              </el-button> -->
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-    <el-dialog title="删除房屋信息" :show-close="false" :visible.sync="dialogDeletedVisible" width="20%">
-      <span>确定删除房屋信息【{{ deletedItem.name }}】？</span>
+    <!-- 分页 -->
+    <div class="pagination-container">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                     :current-page="houseQueryDto.current" :page-sizes="[10, 20, 50]" :page-size="houseQueryDto.size"
+                     layout="total, sizes, prev, pager, next, jumper" :total="apiResult.total" />
+    </div>
+
+    <!-- 删除确认对话框 -->
+    <el-dialog title="删除确认" :visible.sync="dialogDeletedVisible" width="400px" center>
+      <div class="delete-dialog-content">
+        <i class="el-icon-warning" style="color:#F56C6C;font-size:24px;"></i>
+
+        <p>确定删除房源 <span class="highlight">{{ deletedItem.name }}</span> 吗？</p>
+
+      </div>
 
       <span slot="footer" class="dialog-footer">
-                <el-button size="mini" @click="dialogDeletedVisible = false">取消</el-button>
+                <el-button @click="dialogDeletedVisible = false">取消</el-button>
 
-                <el-button size="mini" type="primary" @click="confirmDeleted">确定</el-button>
+                <el-button type="primary" @click="confirmDeleted" :loading="deleting">确定</el-button>
 
             </span>
 
@@ -127,47 +142,51 @@
 </template>
 
 <script>
-// B站 「程序辰星」原创出品
-import AutoInput from "@/components/AutoInput.vue"; // 自己封装好的输入框组件
+import AutoInput from "@/components/AutoInput.vue";
 import Tab from "@/components/Tab.vue";
+
 export default {
-  components: { AutoInput, Tab }, // 注册组件
+  components: { AutoInput, Tab },
   data() {
     return {
       dialogDeletedVisible: false,
-      id: null, // 页面即将删除的数据ID
-      apiResult: { // 后端返回的查询数据的响应数据
-        data: [], // 数据项
-        total: 0, // 符合条件的数据总想 - 初始赋值为0
+      deleting: false,
+      apiResult: {
+        data: [],
+        total: 0
       },
-      landlord: {}, // 房源信息
-      houseQueryDto: { // 搜索条件
-        current: 1, // 当前页 - 初始是第一页
-        size: 10, // 页面显示大小 - 初始是10条
+      houseQueryDto: {
+        current: 1,
+        size: 10,
+        status: null,
+        name: ''
       },
-      dialogDeletedVisible: false, // 删除弹窗控制开关变量 - 初始是关（false）
-      deletedItem: {},
+      deletedItem: {}
     };
   },
   created() {
     this.fetchFreshData();
   },
   methods: {
+    formatDate(date) {
+      if (!date) return '';
+      return new Date(date).toLocaleDateString();
+    },
     deletedHouse(item) {
-      console.log("即将删除数据：",item);
-      this.deletedItem = { ...item };
-      this.id = item.id;
+      this.deletedItem = item;
       this.dialogDeletedVisible = true;
     },
     async confirmDeleted() {
+      this.deleting = true;
       try {
-        console.log("删除项：", this.id);
-        const { message } = await this.$axios.delete(`/house/${this.id}`);
-        this.$message.success(message);
-        this.fetchFreshData(); // 重新加载房源数据
+        await this.$axios.delete(`/house/${this.deletedItem.id}`);
+        this.$message.success('删除成功');
+        this.fetchFreshData();
       } catch (error) {
         this.$message.error(error.message);
-        console.error('房源删除异常:', error);
+      } finally {
+        this.dialogDeletedVisible = false;
+        this.deleting = false;
       }
     },
     updateHouseInfo(id) {
@@ -177,249 +196,256 @@ export default {
       try {
         const { message } = await this.$axios.put(`/house/houseStatusDeal/${id}`);
         this.$message.success(message);
-        this.fetchFreshData(); // 重新加载房源数据
+        this.fetchFreshData();
       } catch (error) {
         this.$message.error(error.message);
-        console.error('房源状态信息设置异常:', error);
       }
     },
     addHouse() {
       this.$router.push('/service-center/post-house');
     },
     handleChange(val) {
-      this.houseQueryDto.status = Number(val.value);
+      this.houseQueryDto.status = val.value === 'null' ? null : Number(val.value);
       this.fetchFreshData();
     },
-    handleClose() {
-      this.drawer = false;
-    },
-    handleDetail(data) {
-      this.drawer = true;
-      this.landlord = data;
-    },
-    // 输入框组件输入回传
     listener(text) {
-      this.houseQueryDto.name = text; // 赋值查询条件的内容
-      this.fetchFreshData(); // 重新加载数据
+      this.houseQueryDto.name = text;
+      this.fetchFreshData();
     },
-    async auditLandlord() {
-      try {
-        const landlord = {
-          id: this.landlord.id,
-          isAudit: true,
-        }
-        await this.$axios.put('/house/update', landlord);
-        this.$message.success('审核成功');
-        this.drawer = false; // 关闭详情抽屉
-        this.fetchFreshData(); // 重新加载房源数据
-      } catch (error) {
-        this.$message.info(error.message);
-        console.error('审核房源信息信息异常:', error);
-      }
-    },
-    // 查询房源信息数据
     async fetchFreshData() {
       try {
         const { data, total } = await this.$axios.post('/house/landlordHouseList', this.houseQueryDto);
         this.apiResult.data = data;
         this.apiResult.total = total;
       } catch (error) {
-        console.error('查询房源信息信息异常:', error);
+        this.$message.error('加载房源数据失败');
       }
     },
-    // 分页 - 处理页面页数切换
     handleSizeChange(size) {
-      this.houseQueryDto.size = size; // 当前页面大小重置
-      this.houseQueryDto.currrent = 1; // 当前页设置为第一页
-      this.fetchFreshData(); // 重新加载页面数据
+      this.houseQueryDto.size = size;
+      this.fetchFreshData();
     },
-    // 分页 - 处理页面当前页切换
     handleCurrentChange(current) {
-      this.houseQueryDto.current = current; // 当前页选中
-      this.fetchFreshData(); // 重新加载页面数据
-    },
-    // 表格点击删除房源信息
-    handleDelete(row) {
-      this.dialogDeletedVisible = true; // 开启删除弹窗确认
-      this.id = row.id;
-    },
-    // 房源信息删除
-    async confirmDeleted() {
-      try {
-        const { code } = await this.$axios.delete(`/house/${this.id}`);
-        if (code === 200) {
-          this.$notify.success({
-            title: '房源信息删除',
-            message: '删除成功',
-            position: 'buttom-right',
-            suration: 1000,
-          });
-          this.dialogDeletedVisible = false; // 关闭删除确认弹窗
-          this.id = null; // 将标识ID置位
-          this.fetchFreshData(); // 删除房源信息数据之后，重新加载房源信息数据
-        }
-      } catch (error) {
-        console.log("删除房源信息数据异常：", error);
-      }
+      this.houseQueryDto.current = current;
+      this.fetchFreshData();
     }
-  },
+  }
 };
 </script>
 
 <style scoped lang="scss">
-.nav-text {
-
-  font-size: 18px;
-  color: #505050;
-  font-weight: 800;
-  padding: 10px;
-
+.house-management-container {
+  padding: 24px;
+  background-color: #fff;
+  // border-radius: 8px;
+  // box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.house-item {
-
+.management-header {
+  margin-bottom: 24px;
   display: flex;
-  gap: 20px;
-  padding: 30px 10px;
+  flex-direction: column;
+  gap: 16px;
 
-  border-bottom: 1px solid rgb(240, 240, 240);
+  .page-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #303133;
+    margin: 0;
+  }
+
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .operation-section {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .add-button {
+        padding: 10px 16px;
+      }
+
+      .search-input {
+        width: 240px;
+      }
+    }
+  }
+}
+
+.house-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.house-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  //   border: 1px solid #EBEEF5;
+  transition: all 0.3s;
+
+  // &:hover {
+  //     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  //     transform: translateY(-2px);
+  // }
+
+  //   &.status-available {
+  //     border-left: 4px solid #67C23A;
+  //   }
+
+  &.status-offline {
+    background-color: rgb(248,248,248);
+  }
+}
+
+.house-image {
+  position: relative;
+  width: 200px;
+  height: 140px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
 
   img {
-    width: 130px;
-    height: 90px;
-    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .time {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #505050;
+  .status-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
   }
+}
 
-  .name {
-    font-size: 20px;
+.house-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
-    .status1 {
-      background-color: rgb(235, 191, 78);
-      padding: 2px 6px;
-      color: rgb(255, 255, 255);
-      font-size: 10px;
-    }
-
-    .status2 {
-      background-color: rgb(239, 116, 64);
-      padding: 2px 6px;
-      color: rgb(255, 255, 255);
-      font-size: 10px;
-    }
-
-  }
-
-  .point {
+  .info-header {
     display: flex;
-    gap: 100px;
-    margin-block: 10px;
-    min-width: 600px;
     justify-content: space-between;
-    box-sizing: border-box;
+    align-items: center;
 
-    .right {
+    .house-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      color: #303133;
+    }
+
+    .create-time {
+      font-size: 20px;
+      color: #909399;
+    }
+  }
+
+  .info-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0;
+
+    .meta-item {
+      font-size: 14px;
+      color: #606266;
+
+      i {
+        margin-right: 6px;
+        color: #909399;
+      }
+    }
+  }
+
+  .info-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+
+    .rent-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #F56C6C;
+    }
+
+    .action-buttons {
       display: flex;
-      gap: 20px;
+      gap: 16px;
 
       div {
-        font-size: 14px;
-        border: 1px solid rgb(193, 193, 193);
-        color: rgb(78, 77, 77);
+        color: #4c4c4d;
+        font-size: 16px;
         cursor: pointer;
-        padding: 4px 16px;
 
         &:hover {
-          border: 1px solid rgb(139, 174, 236);
-          color: rgb(139, 174, 236);
+          color: #8e8eca;
         }
       }
     }
+  }
+}
 
-    .left {
-      display: flex;
-      justify-content: left;
-      align-items: center;
-      gap: 20px;
-      min-width: 500px;
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: right;
+}
 
-      div {
-        background-color: rgb(245, 245, 245);
-        border-radius: 2px;
-        font-size: 12px;
-        padding: 2px 4px;
-        color: rgb(56, 60, 89);
+.delete-dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .highlight {
+    color: #F56C6C;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 768px) {
+  .house-card {
+    flex-direction: column;
+  }
+
+  .house-image {
+    width: 100%;
+    height: 180px;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: flex-start !important;
+
+    .operation-section {
+      width: 100%;
+
+      .search-input {
+        flex: 1;
       }
     }
-
   }
-
-  .rent {
-    font-size: 22px;
-    font-weight: 900;
-    color: rgb(236, 108, 97);
-  }
-
-}
-
-
-.pager {
-  margin-block: 20px;
-}
-
-/* 默认隐藏操作按钮 */
-.operate-buttons {
-  opacity: 0;
-  transition: opacity 0.3s;
-  /* 添加过渡效果 */
-  cursor: pointer;
-
-  i {
-    padding: 8px;
-    border-radius: 6px;
-    transition: all .5s ease;
-
-    &:hover {
-      background-color: rgb(236, 237, 238);
-    }
-  }
-
-}
-
-/* 行悬停时显示操作按钮 */
-.el-table__body tr:hover .operate-buttons {
-  opacity: 1;
-}
-
-.container {
-  padding: 20px 30px;
-  background-color: rgb(255, 255, 255);
-}
-
-.top-healder {
-  margin-block: 10px;
-  padding-inline: 10px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .nav-left,
-  .nav-right {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .nav-left {
-    display: flex;
-  }
-
 }
 </style>
