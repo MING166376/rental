@@ -146,13 +146,13 @@
       <div class="action-bar">
         <div class="contact-info">
           <div class="avatar">
-            <img :src="house.landlordAvatar" alt="房东头像">
+            <img :src="house.landlordAvatar" alt="中介经理头像">
           </div>
 
           <div class="info">
             <div class="name">{{ house.landlordName }}</div>
 
-            <div class="role">房东</div>
+            <div class="role">中介经理</div>
 
           </div>
 
