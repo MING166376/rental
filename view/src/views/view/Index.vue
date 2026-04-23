@@ -6,7 +6,7 @@
     <!-- 导航栏 -->
     <header class="main-header">
       <div class="logo-container">
-        <Logo sysName="海螺租房" textColor="#fff" />
+        <Logo sysName="租房网" textColor="#fff" />
       </div>
 
       <button class="login-btn" @click="goLogin">
@@ -102,7 +102,7 @@
 
     <!-- 底部CTA -->
     <section class="cta-section">
-      <h2>立即加入海螺租房</h2>
+      <h2>立即加入租房网</h2>
 
       <p>注册即可查看完整房源信息并预约看房</p>
 
@@ -191,7 +191,7 @@ export default {
   left: 0;
   width: 100%;
   height: 540px;
-  background: linear-gradient(-45deg, #72ac35, #3e6b0d);
+  background: linear-gradient(-45deg, #9bb6d5, #6a8db5);
   z-index: -1;
 }
 
@@ -481,7 +481,7 @@ export default {
 
 .cta-section {
   padding: 100px 5%;
-  background: linear-gradient(135deg, #4361ee, #3f37c9);
+  background: linear-gradient(135deg, #5a5a5a, #3a3a3a);
   color: white;
   text-align: center;
 

@@ -289,7 +289,7 @@
 
       <!-- 额外拓展信息 -->
       <div class="right">
-        <h2 style="margin-top: 0;">资讯推荐</h2>
+        <h2 style="margin-top: 0;">热推房源</h2>
 
         <div  @click="houseItemClick(house.id)" class="item-house" v-for="(house,index) in houseRecommedList" :key="index">
           <img :src="house.cover" alt="">

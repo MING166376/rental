@@ -14,7 +14,7 @@
       <div class="header-content">
         <div class="main-nav">
           <Logo class="logo" :logoSize="Number(26)" :fontSize="Number(20)" textColor="rgb(51,51,51)"
-                sysName="海螺租房" />
+                sysName="租房网" />
         </div>
 
         <nav class="main-nav">

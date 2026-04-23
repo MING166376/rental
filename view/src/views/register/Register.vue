@@ -295,7 +295,7 @@ export default {
           justify-content: space-between;
           width: 100%;
           height: 50px;
-          background: linear-gradient(90deg, rgb(34, 181, 115), rgb(96, 225, 167));
+          background: linear-gradient(90deg, #3a3a3a, #8a8a8a);
           color: white;
           border: none;
           border-radius: 8px;

@@ -15,7 +15,7 @@
       <div class="right-login">
         <transition-group name="slide-fade" tag="div">
           <div key="header" class="login-header">
-            <h2>这里是海螺租房</h2>
+            <h2>在线看房租赁平台</h2>
 
             <p class="welcome-text">开启你的便捷生活之旅</p>
 
@@ -278,7 +278,7 @@ export default {
           justify-content: space-between;
           width: 100%;
           height: 50px;
-          background: linear-gradient(90deg, rgb(34, 181, 115), rgb(96, 225, 167));
+          background: linear-gradient(90deg, #3a3a3a, #8a8a8a);
           color: white;
           border: none;
           border-radius: 8px;
