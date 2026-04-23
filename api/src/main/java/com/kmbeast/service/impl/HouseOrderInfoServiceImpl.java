@@ -107,7 +107,7 @@ public class HouseOrderInfoServiceImpl extends ServiceImpl<HouseOrderInfoMapper,
         List<Integer> houseIdsExit = houseIds.stream().filter(id -> Objects.equals(id, houseId)).
                 collect(Collectors.toList());
         // 5. 没找到，也是理想的情况，证明该用户预约的房屋跟自己没有什么关系，可以预约
-        AssertUtils.isTrue(houseIdsExit.isEmpty(), "大兄dei，请勿预约自己名下房源信息");
+        AssertUtils.isTrue(houseIdsExit.isEmpty(), "请勿预约自己名下房源");
     }
 
     /**
